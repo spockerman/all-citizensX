@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.allcitizens.infrastructure.adapter.inbound.rest.request.ServiceRequestControllerTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.157 s -- in com.allcitizens.infrastructure.adapter.inbound.rest.request.ServiceRequestControllerTest

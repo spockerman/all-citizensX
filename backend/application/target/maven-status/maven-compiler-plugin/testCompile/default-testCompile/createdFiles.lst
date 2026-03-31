@@ -1,0 +1,3 @@
+com/allcitizens/application/request/service/ServiceRequestApplicationServiceTest.class
+com/allcitizens/application/tenant/service/TenantApplicationServiceTest.class
+com/allcitizens/application/department/service/DepartmentApplicationServiceTest.class

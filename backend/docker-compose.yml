@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: allcitizens-db
+    environment:
+      POSTGRES_DB: allcitizens
+      POSTGRES_USER: allcitizens
+      POSTGRES_PASSWORD: allcitizens
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: allcitizens-keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/allcitizens
+      KC_DB_SCHEMA: keycloak
+      KC_DB_USERNAME: allcitizens
+      KC_DB_PASSWORD: allcitizens
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8180:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:

@@ -1,0 +1,13 @@
+com/allcitizens/domain/exception/DomainException.class
+com/allcitizens/domain/exception/BusinessRuleException.class
+com/allcitizens/domain/department/Department.class
+com/allcitizens/domain/tenant/TenantRepository.class
+com/allcitizens/domain/request/ServiceRequestRepository.class
+com/allcitizens/domain/request/RequestStatus.class
+com/allcitizens/domain/department/DepartmentRepository.class
+com/allcitizens/domain/request/Priority.class
+com/allcitizens/domain/request/ServiceRequest.class
+com/allcitizens/domain/exception/EntityNotFoundException.class
+com/allcitizens/domain/request/Channel.class
+com/allcitizens/domain/request/EmotionalState.class
+com/allcitizens/domain/tenant/Tenant.class

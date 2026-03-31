@@ -1,0 +1,14 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ""
+          jwk-set-uri: ""
+
+  flyway:
+    enabled: true
+
+logging:
+  level:
+    com.allcitizens: DEBUG

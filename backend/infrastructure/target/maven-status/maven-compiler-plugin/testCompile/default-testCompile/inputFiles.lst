@@ -1,0 +1,3 @@
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/department/DepartmentControllerTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/request/ServiceRequestControllerTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/tenant/TenantControllerTest.java

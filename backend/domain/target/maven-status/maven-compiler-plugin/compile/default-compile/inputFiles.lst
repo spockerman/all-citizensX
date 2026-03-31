@@ -1,0 +1,13 @@
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/department/Department.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/department/DepartmentRepository.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/exception/BusinessRuleException.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/exception/DomainException.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/exception/EntityNotFoundException.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/request/Channel.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/request/EmotionalState.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/request/Priority.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/request/RequestStatus.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/request/ServiceRequest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/request/ServiceRequestRepository.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/tenant/Tenant.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/main/java/com/allcitizens/domain/tenant/TenantRepository.java

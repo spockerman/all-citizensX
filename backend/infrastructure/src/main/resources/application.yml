@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: all-citizens
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/allcitizens?stringtype=unspecified
+    username: allcitizens
+    password: allcitizens
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/allcitizens
+          jwk-set-uri: http://localhost:8180/realms/allcitizens/protocol/openid-connect/certs
+
+logging:
+  level:
+    com.allcitizens: DEBUG
+    org.hibernate.SQL: DEBUG

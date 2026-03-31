@@ -1,0 +1,3 @@
+com/allcitizens/infrastructure/adapter/inbound/rest/tenant/TenantControllerTest.class
+com/allcitizens/infrastructure/adapter/inbound/rest/request/ServiceRequestControllerTest.class
+com/allcitizens/infrastructure/adapter/inbound/rest/department/DepartmentControllerTest.class
