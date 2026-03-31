@@ -1,3 +1,6 @@
+com/allcitizens/domain/catalog/CatalogServiceTest.class
 com/allcitizens/domain/request/ServiceRequestTest.class
 com/allcitizens/domain/department/DepartmentTest.class
+com/allcitizens/domain/subject/SubjectTest.class
+com/allcitizens/domain/subdivision/SubdivisionTest.class
 com/allcitizens/domain/tenant/TenantTest.class

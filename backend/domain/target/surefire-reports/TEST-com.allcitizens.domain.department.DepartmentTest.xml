@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.allcitizens.domain.department.DepartmentTest" time="0.37" tests="11" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.allcitizens.domain.department.DepartmentTest" time="0.272" tests="11" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/home/sandrocampos/.sdkman/candidates/java/17.0.17-amzn/lib"/>
-    <property name="sun.java.command" value="/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/target/surefire/surefirebooter-20260331102822134_3.jar /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/target/surefire 2026-03-31T10-28-21_866-jvmRun1 surefire-20260331102822134_1tmp surefire_0-20260331102822134_2tmp"/>
+    <property name="sun.java.command" value="/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/target/surefire/surefirebooter-20260331124324037_3.jar /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/target/surefire 2026-03-31T12-43-23_864-jvmRun1 surefire-20260331124324037_1tmp surefire_0-20260331124324037_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/target/test-classes:/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/target/classes:/home/sandrocampos/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.5/junit-jupiter-5.10.5.jar:/home/sandrocampos/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.5/junit-jupiter-api-5.10.5.jar:/home/sandrocampos/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/sandrocampos/.m2/repository/org/junit/platform/junit-platform-commons/1.10.5/junit-platform-commons-1.10.5.jar:/home/sandrocampos/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/sandrocampos/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.5/junit-jupiter-params-5.10.5.jar:/home/sandrocampos/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.5/junit-jupiter-engine-5.10.5.jar:/home/sandrocampos/.m2/repository/org/junit/platform/junit-platform-engine/1.10.5/junit-platform-engine-1.10.5.jar:/home/sandrocampos/.m2/repository/org/assertj/assertj-core/3.25.3/assertj-core-3.25.3.jar:/home/sandrocampos/.m2/repository/net/bytebuddy/byte-buddy/1.14.19/byte-buddy-1.14.19.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/target/surefire/surefirebooter-20260331102822134_3.jar"/>
+    <property name="surefire.real.class.path" value="/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/target/surefire/surefirebooter-20260331124324037_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.17+10-LTS"/>
     <property name="user.name" value="sandrocampos"/>
@@ -53,15 +53,15 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="shouldFailAssignParentWithNull" classname="com.allcitizens.domain.department.DepartmentTest" time="0.176"/>
-  <testcase name="shouldFailWhenNameIsBlank" classname="com.allcitizens.domain.department.DepartmentTest" time="0.004"/>
-  <testcase name="shouldCreateValidDepartment" classname="com.allcitizens.domain.department.DepartmentTest" time="0.018"/>
-  <testcase name="shouldAssignParent" classname="com.allcitizens.domain.department.DepartmentTest" time="0.005"/>
-  <testcase name="shouldUpdateDepartment" classname="com.allcitizens.domain.department.DepartmentTest" time="0.004"/>
-  <testcase name="shouldFailWhenNameIsNull" classname="com.allcitizens.domain.department.DepartmentTest" time="0.01"/>
-  <testcase name="shouldDeactivate" classname="com.allcitizens.domain.department.DepartmentTest" time="0.004"/>
-  <testcase name="shouldRemoveParent" classname="com.allcitizens.domain.department.DepartmentTest" time="0.003"/>
-  <testcase name="shouldFailUpdateWithBlankName" classname="com.allcitizens.domain.department.DepartmentTest" time="0.003"/>
+  <testcase name="shouldFailAssignParentWithNull" classname="com.allcitizens.domain.department.DepartmentTest" time="0.138"/>
+  <testcase name="shouldFailWhenNameIsBlank" classname="com.allcitizens.domain.department.DepartmentTest" time="0.002"/>
+  <testcase name="shouldCreateValidDepartment" classname="com.allcitizens.domain.department.DepartmentTest" time="0.014"/>
+  <testcase name="shouldAssignParent" classname="com.allcitizens.domain.department.DepartmentTest" time="0.002"/>
+  <testcase name="shouldUpdateDepartment" classname="com.allcitizens.domain.department.DepartmentTest" time="0.003"/>
+  <testcase name="shouldFailWhenNameIsNull" classname="com.allcitizens.domain.department.DepartmentTest" time="0.002"/>
+  <testcase name="shouldDeactivate" classname="com.allcitizens.domain.department.DepartmentTest" time="0.002"/>
+  <testcase name="shouldRemoveParent" classname="com.allcitizens.domain.department.DepartmentTest" time="0.002"/>
+  <testcase name="shouldFailUpdateWithBlankName" classname="com.allcitizens.domain.department.DepartmentTest" time="0.002"/>
   <testcase name="shouldActivate" classname="com.allcitizens.domain.department.DepartmentTest" time="0.002"/>
-  <testcase name="shouldFailWhenTenantIdIsNull" classname="com.allcitizens.domain.department.DepartmentTest" time="0.004"/>
+  <testcase name="shouldFailWhenTenantIdIsNull" classname="com.allcitizens.domain.department.DepartmentTest" time="0.002"/>
 </testsuite>

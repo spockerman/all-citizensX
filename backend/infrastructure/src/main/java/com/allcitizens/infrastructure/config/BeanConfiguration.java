@@ -1,5 +1,11 @@
 package com.allcitizens.infrastructure.config;
 
+import com.allcitizens.application.catalog.service.CatalogServiceApplicationService;
+import com.allcitizens.application.catalog.usecase.CreateCatalogServiceUseCase;
+import com.allcitizens.application.catalog.usecase.DeleteCatalogServiceUseCase;
+import com.allcitizens.application.catalog.usecase.GetCatalogServiceUseCase;
+import com.allcitizens.application.catalog.usecase.ListCatalogServicesUseCase;
+import com.allcitizens.application.catalog.usecase.UpdateCatalogServiceUseCase;
 import com.allcitizens.application.department.service.DepartmentApplicationService;
 import com.allcitizens.application.department.usecase.CreateDepartmentUseCase;
 import com.allcitizens.application.department.usecase.DeleteDepartmentUseCase;
@@ -11,16 +17,69 @@ import com.allcitizens.application.request.usecase.CancelServiceRequestUseCase;
 import com.allcitizens.application.request.usecase.CloseServiceRequestUseCase;
 import com.allcitizens.application.request.usecase.GetServiceRequestUseCase;
 import com.allcitizens.application.request.usecase.ListServiceRequestsUseCase;
+import com.allcitizens.application.subdivision.service.SubdivisionApplicationService;
+import com.allcitizens.application.subdivision.usecase.CreateSubdivisionUseCase;
+import com.allcitizens.application.subdivision.usecase.DeleteSubdivisionUseCase;
+import com.allcitizens.application.subdivision.usecase.GetSubdivisionUseCase;
+import com.allcitizens.application.subdivision.usecase.ListSubdivisionsUseCase;
+import com.allcitizens.application.subdivision.usecase.UpdateSubdivisionUseCase;
+import com.allcitizens.application.subject.service.SubjectApplicationService;
+import com.allcitizens.application.subject.usecase.CreateSubjectUseCase;
+import com.allcitizens.application.subject.usecase.DeleteSubjectUseCase;
+import com.allcitizens.application.subject.usecase.GetSubjectUseCase;
+import com.allcitizens.application.subject.usecase.ListSubjectsUseCase;
+import com.allcitizens.application.subject.usecase.UpdateSubjectUseCase;
 import com.allcitizens.application.tenant.service.TenantApplicationService;
 import com.allcitizens.application.tenant.usecase.DeleteTenantUseCase;
+import com.allcitizens.domain.catalog.CatalogServiceRepository;
 import com.allcitizens.domain.department.DepartmentRepository;
 import com.allcitizens.domain.request.ServiceRequestRepository;
+import com.allcitizens.domain.subdivision.SubdivisionRepository;
+import com.allcitizens.domain.subject.SubjectRepository;
 import com.allcitizens.domain.tenant.TenantRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BeanConfiguration {
+
+    // ── Catalog Service ──────────────────────────────────────────────────
+
+    @Bean
+    public CatalogServiceApplicationService catalogServiceApplicationService(
+            CatalogServiceRepository repository) {
+        return new CatalogServiceApplicationService(repository);
+    }
+
+    @Bean
+    public CreateCatalogServiceUseCase createCatalogServiceUseCase(
+            CatalogServiceApplicationService service) {
+        return service::create;
+    }
+
+    @Bean
+    public GetCatalogServiceUseCase getCatalogServiceUseCase(
+            CatalogServiceApplicationService service) {
+        return service::getById;
+    }
+
+    @Bean
+    public UpdateCatalogServiceUseCase updateCatalogServiceUseCase(
+            CatalogServiceApplicationService service) {
+        return service::update;
+    }
+
+    @Bean
+    public ListCatalogServicesUseCase listCatalogServicesUseCase(
+            CatalogServiceApplicationService service) {
+        return service::listByTenantId;
+    }
+
+    @Bean
+    public DeleteCatalogServiceUseCase deleteCatalogServiceUseCase(
+            CatalogServiceApplicationService service) {
+        return service::delete;
+    }
 
     // ── Department ──────────────────────────────────────────────────────
 
@@ -90,6 +149,82 @@ public class BeanConfiguration {
     public CancelServiceRequestUseCase cancelServiceRequestUseCase(
             ServiceRequestApplicationService service) {
         return service::cancel;
+    }
+
+    // ── Subject ──────────────────────────────────────────────────────────
+
+    @Bean
+    public SubjectApplicationService subjectApplicationService(
+            SubjectRepository repository) {
+        return new SubjectApplicationService(repository);
+    }
+
+    @Bean
+    public CreateSubjectUseCase createSubjectUseCase(
+            SubjectApplicationService service) {
+        return service::create;
+    }
+
+    @Bean
+    public GetSubjectUseCase getSubjectUseCase(
+            SubjectApplicationService service) {
+        return service::getById;
+    }
+
+    @Bean
+    public UpdateSubjectUseCase updateSubjectUseCase(
+            SubjectApplicationService service) {
+        return service::update;
+    }
+
+    @Bean
+    public ListSubjectsUseCase listSubjectsUseCase(
+            SubjectApplicationService service) {
+        return service::listByTenantId;
+    }
+
+    @Bean
+    public DeleteSubjectUseCase deleteSubjectUseCase(
+            SubjectApplicationService service) {
+        return service::delete;
+    }
+
+    // ── Subdivision ──────────────────────────────────────────────────────
+
+    @Bean
+    public SubdivisionApplicationService subdivisionApplicationService(
+            SubdivisionRepository repository) {
+        return new SubdivisionApplicationService(repository);
+    }
+
+    @Bean
+    public CreateSubdivisionUseCase createSubdivisionUseCase(
+            SubdivisionApplicationService service) {
+        return service::create;
+    }
+
+    @Bean
+    public GetSubdivisionUseCase getSubdivisionUseCase(
+            SubdivisionApplicationService service) {
+        return service::getById;
+    }
+
+    @Bean
+    public UpdateSubdivisionUseCase updateSubdivisionUseCase(
+            SubdivisionApplicationService service) {
+        return service::update;
+    }
+
+    @Bean
+    public ListSubdivisionsUseCase listSubdivisionsUseCase(
+            SubdivisionApplicationService service) {
+        return service::listAll;
+    }
+
+    @Bean
+    public DeleteSubdivisionUseCase deleteSubdivisionUseCase(
+            SubdivisionApplicationService service) {
+        return service::delete;
     }
 
     // ── Tenant ──────────────────────────────────────────────────────────

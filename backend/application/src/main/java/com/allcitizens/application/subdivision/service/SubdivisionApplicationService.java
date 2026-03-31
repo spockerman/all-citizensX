@@ -1,0 +1,68 @@
+package com.allcitizens.application.subdivision.service;
+
+import com.allcitizens.application.subdivision.command.CreateSubdivisionCommand;
+import com.allcitizens.application.subdivision.command.UpdateSubdivisionCommand;
+import com.allcitizens.application.subdivision.result.SubdivisionResult;
+import com.allcitizens.domain.exception.EntityNotFoundException;
+import com.allcitizens.domain.subdivision.Subdivision;
+import com.allcitizens.domain.subdivision.SubdivisionRepository;
+import jakarta.transaction.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+
+public class SubdivisionApplicationService {
+
+    private final SubdivisionRepository subdivisionRepository;
+
+    public SubdivisionApplicationService(SubdivisionRepository subdivisionRepository) {
+        this.subdivisionRepository = subdivisionRepository;
+    }
+
+    @Transactional
+    public SubdivisionResult create(CreateSubdivisionCommand command) {
+        var subdivision = Subdivision.create(command.name());
+        subdivision = subdivisionRepository.save(subdivision);
+        return SubdivisionResult.fromDomain(subdivision);
+    }
+
+    public SubdivisionResult getById(UUID id) {
+        var subdivision = subdivisionRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Subdivision", id));
+        return SubdivisionResult.fromDomain(subdivision);
+    }
+
+    @Transactional
+    public SubdivisionResult update(UUID id, UpdateSubdivisionCommand command) {
+        var subdivision = subdivisionRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Subdivision", id));
+
+        if (command.name() != null) {
+            subdivision.update(command.name());
+        }
+        if (command.active() != null) {
+            if (command.active()) {
+                subdivision.activate();
+            } else {
+                subdivision.deactivate();
+            }
+        }
+
+        subdivision = subdivisionRepository.save(subdivision);
+        return SubdivisionResult.fromDomain(subdivision);
+    }
+
+    public List<SubdivisionResult> listAll() {
+        return subdivisionRepository.findAll().stream()
+            .map(SubdivisionResult::fromDomain)
+            .toList();
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        if (!subdivisionRepository.existsById(id)) {
+            throw new EntityNotFoundException("Subdivision", id);
+        }
+        subdivisionRepository.deleteById(id);
+    }
+}
