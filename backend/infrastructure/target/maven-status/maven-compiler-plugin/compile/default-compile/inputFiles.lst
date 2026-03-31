@@ -1,4 +1,9 @@
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/AllCitizensApplication.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/address/AddressController.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/address/dto/AddressResponse.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/address/dto/CreateAddressRequest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/address/dto/UpdateAddressRequest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/address/mapper/AddressRestMapper.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/catalog/CatalogServiceController.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/catalog/dto/CatalogServiceResponse.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/catalog/dto/CreateCatalogServiceRequest.java
@@ -9,6 +14,11 @@
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/department/dto/DepartmentResponse.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/department/dto/UpdateDepartmentRequest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/department/mapper/DepartmentRestMapper.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/person/PersonController.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/person/dto/CreatePersonRequest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/person/dto/PersonResponse.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/person/dto/UpdatePersonRequest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/person/mapper/PersonRestMapper.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/request/ServiceRequestController.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/request/dto/CreateServiceRequestRequest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/request/dto/ServiceRequestResponse.java
@@ -29,6 +39,10 @@
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/tenant/dto/TenantResponse.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/tenant/dto/UpdateTenantRequest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/inbound/rest/tenant/mapper/TenantRestMapper.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/address/AddressRepositoryImpl.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/address/entity/AddressJpaEntity.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/address/mapper/AddressPersistenceMapper.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/address/repository/JpaAddressRepository.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/catalog/CatalogServiceRepositoryImpl.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/catalog/entity/CatalogServiceJpaEntity.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/catalog/mapper/CatalogServicePersistenceMapper.java
@@ -37,6 +51,12 @@
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/department/entity/DepartmentJpaEntity.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/department/mapper/DepartmentPersistenceMapper.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/department/repository/JpaDepartmentRepository.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/person/PersonRepositoryImpl.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/person/entity/IndividualJpaEntity.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/person/entity/PersonJpaEntity.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/person/mapper/PersonPersistenceMapper.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/person/repository/JpaIndividualRepository.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/person/repository/JpaPersonRepository.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/request/ServiceRequestRepositoryImpl.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/request/entity/ServiceRequestJpaEntity.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/main/java/com/allcitizens/infrastructure/adapter/outbound/persistence/request/mapper/ServiceRequestPersistenceMapper.java

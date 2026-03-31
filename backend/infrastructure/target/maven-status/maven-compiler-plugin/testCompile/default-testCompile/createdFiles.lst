@@ -1,6 +1,8 @@
 com/allcitizens/infrastructure/adapter/inbound/rest/tenant/TenantControllerTest.class
-com/allcitizens/infrastructure/adapter/inbound/rest/catalog/CatalogServiceControllerTest.class
+com/allcitizens/infrastructure/adapter/inbound/rest/person/PersonControllerTest.class
 com/allcitizens/infrastructure/adapter/inbound/rest/request/ServiceRequestControllerTest.class
+com/allcitizens/infrastructure/adapter/inbound/rest/catalog/CatalogServiceControllerTest.class
 com/allcitizens/infrastructure/adapter/inbound/rest/subdivision/SubdivisionControllerTest.class
+com/allcitizens/infrastructure/adapter/inbound/rest/address/AddressControllerTest.class
 com/allcitizens/infrastructure/adapter/inbound/rest/subject/SubjectControllerTest.class
 com/allcitizens/infrastructure/adapter/inbound/rest/department/DepartmentControllerTest.class

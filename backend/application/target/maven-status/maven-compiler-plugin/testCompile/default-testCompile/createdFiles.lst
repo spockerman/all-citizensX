@@ -1,5 +1,7 @@
 com/allcitizens/application/subject/service/SubjectApplicationServiceTest.class
-com/allcitizens/application/tenant/service/TenantApplicationServiceTest.class
 com/allcitizens/application/department/service/DepartmentApplicationServiceTest.class
-com/allcitizens/application/subdivision/service/SubdivisionApplicationServiceTest.class
 com/allcitizens/application/request/service/ServiceRequestApplicationServiceTest.class
+com/allcitizens/application/address/service/AddressApplicationServiceTest.class
+com/allcitizens/application/tenant/service/TenantApplicationServiceTest.class
+com/allcitizens/application/person/service/PersonApplicationServiceTest.class
+com/allcitizens/application/subdivision/service/SubdivisionApplicationServiceTest.class

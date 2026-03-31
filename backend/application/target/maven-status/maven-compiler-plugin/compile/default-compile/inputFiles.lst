@@ -1,3 +1,11 @@
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/address/command/CreateAddressCommand.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/address/command/UpdateAddressCommand.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/address/result/AddressResult.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/address/service/AddressApplicationService.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/address/usecase/CreateAddressUseCase.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/address/usecase/DeleteAddressUseCase.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/address/usecase/GetAddressUseCase.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/address/usecase/UpdateAddressUseCase.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/catalog/command/CreateCatalogServiceCommand.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/catalog/command/UpdateCatalogServiceCommand.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/catalog/result/CatalogServiceResult.java
@@ -16,6 +24,15 @@
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/department/usecase/GetDepartmentUseCase.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/department/usecase/ListDepartmentsUseCase.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/department/usecase/UpdateDepartmentUseCase.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/command/CreatePersonCommand.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/command/UpdatePersonCommand.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/result/PersonResult.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/service/PersonApplicationService.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/usecase/CreatePersonUseCase.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/usecase/DeletePersonUseCase.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/usecase/GetPersonUseCase.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/usecase/ListPersonsUseCase.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/person/usecase/UpdatePersonUseCase.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/request/command/CreateServiceRequestCommand.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/request/command/UpdateServiceRequestCommand.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/application/src/main/java/com/allcitizens/application/request/result/ServiceRequestResult.java

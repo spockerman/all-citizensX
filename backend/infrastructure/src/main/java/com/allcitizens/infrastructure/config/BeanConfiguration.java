@@ -6,6 +6,11 @@ import com.allcitizens.application.catalog.usecase.DeleteCatalogServiceUseCase;
 import com.allcitizens.application.catalog.usecase.GetCatalogServiceUseCase;
 import com.allcitizens.application.catalog.usecase.ListCatalogServicesUseCase;
 import com.allcitizens.application.catalog.usecase.UpdateCatalogServiceUseCase;
+import com.allcitizens.application.address.service.AddressApplicationService;
+import com.allcitizens.application.address.usecase.CreateAddressUseCase;
+import com.allcitizens.application.address.usecase.DeleteAddressUseCase;
+import com.allcitizens.application.address.usecase.GetAddressUseCase;
+import com.allcitizens.application.address.usecase.UpdateAddressUseCase;
 import com.allcitizens.application.department.service.DepartmentApplicationService;
 import com.allcitizens.application.department.usecase.CreateDepartmentUseCase;
 import com.allcitizens.application.department.usecase.DeleteDepartmentUseCase;
@@ -23,6 +28,12 @@ import com.allcitizens.application.subdivision.usecase.DeleteSubdivisionUseCase;
 import com.allcitizens.application.subdivision.usecase.GetSubdivisionUseCase;
 import com.allcitizens.application.subdivision.usecase.ListSubdivisionsUseCase;
 import com.allcitizens.application.subdivision.usecase.UpdateSubdivisionUseCase;
+import com.allcitizens.application.person.service.PersonApplicationService;
+import com.allcitizens.application.person.usecase.CreatePersonUseCase;
+import com.allcitizens.application.person.usecase.DeletePersonUseCase;
+import com.allcitizens.application.person.usecase.GetPersonUseCase;
+import com.allcitizens.application.person.usecase.ListPersonsUseCase;
+import com.allcitizens.application.person.usecase.UpdatePersonUseCase;
 import com.allcitizens.application.subject.service.SubjectApplicationService;
 import com.allcitizens.application.subject.usecase.CreateSubjectUseCase;
 import com.allcitizens.application.subject.usecase.DeleteSubjectUseCase;
@@ -32,9 +43,11 @@ import com.allcitizens.application.subject.usecase.UpdateSubjectUseCase;
 import com.allcitizens.application.tenant.service.TenantApplicationService;
 import com.allcitizens.application.tenant.usecase.DeleteTenantUseCase;
 import com.allcitizens.domain.catalog.CatalogServiceRepository;
+import com.allcitizens.domain.address.AddressRepository;
 import com.allcitizens.domain.department.DepartmentRepository;
 import com.allcitizens.domain.request.ServiceRequestRepository;
 import com.allcitizens.domain.subdivision.SubdivisionRepository;
+import com.allcitizens.domain.person.PersonRepository;
 import com.allcitizens.domain.subject.SubjectRepository;
 import com.allcitizens.domain.tenant.TenantRepository;
 import org.springframework.context.annotation.Bean;
@@ -78,6 +91,38 @@ public class BeanConfiguration {
     @Bean
     public DeleteCatalogServiceUseCase deleteCatalogServiceUseCase(
             CatalogServiceApplicationService service) {
+        return service::delete;
+    }
+
+    // ── Address ─────────────────────────────────────────────────────────
+
+    @Bean
+    public AddressApplicationService addressApplicationService(
+            AddressRepository repository) {
+        return new AddressApplicationService(repository);
+    }
+
+    @Bean
+    public CreateAddressUseCase createAddressUseCase(
+            AddressApplicationService service) {
+        return service::create;
+    }
+
+    @Bean
+    public GetAddressUseCase getAddressUseCase(
+            AddressApplicationService service) {
+        return service::getById;
+    }
+
+    @Bean
+    public UpdateAddressUseCase updateAddressUseCase(
+            AddressApplicationService service) {
+        return service::update;
+    }
+
+    @Bean
+    public DeleteAddressUseCase deleteAddressUseCase(
+            AddressApplicationService service) {
         return service::delete;
     }
 
@@ -149,6 +194,44 @@ public class BeanConfiguration {
     public CancelServiceRequestUseCase cancelServiceRequestUseCase(
             ServiceRequestApplicationService service) {
         return service::cancel;
+    }
+
+    // ── Person ───────────────────────────────────────────────────────────
+
+    @Bean
+    public PersonApplicationService personApplicationService(
+            PersonRepository repository) {
+        return new PersonApplicationService(repository);
+    }
+
+    @Bean
+    public CreatePersonUseCase createPersonUseCase(
+            PersonApplicationService service) {
+        return service::create;
+    }
+
+    @Bean
+    public GetPersonUseCase getPersonUseCase(
+            PersonApplicationService service) {
+        return service::getById;
+    }
+
+    @Bean
+    public UpdatePersonUseCase updatePersonUseCase(
+            PersonApplicationService service) {
+        return service::update;
+    }
+
+    @Bean
+    public ListPersonsUseCase listPersonsUseCase(
+            PersonApplicationService service) {
+        return service::listByTenantId;
+    }
+
+    @Bean
+    public DeletePersonUseCase deletePersonUseCase(
+            PersonApplicationService service) {
+        return service::delete;
     }
 
     // ── Subject ──────────────────────────────────────────────────────────
