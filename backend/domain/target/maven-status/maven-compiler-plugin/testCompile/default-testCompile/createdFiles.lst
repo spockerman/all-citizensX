@@ -1,8 +1,11 @@
 com/allcitizens/domain/request/ServiceRequestTest.class
+com/allcitizens/domain/notification/NotificationRuleTest.class
 com/allcitizens/domain/department/DepartmentTest.class
+com/allcitizens/domain/audit/AuditLogEntryTest.class
 com/allcitizens/domain/address/AddressTest.class
 com/allcitizens/domain/subdivision/SubdivisionTest.class
 com/allcitizens/domain/tenant/TenantTest.class
 com/allcitizens/domain/catalog/CatalogServiceTest.class
+com/allcitizens/domain/notification/NotificationTest.class
 com/allcitizens/domain/subject/SubjectTest.class
 com/allcitizens/domain/person/PersonTest.class

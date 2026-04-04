@@ -4,17 +4,20 @@ import com.allcitizens.application.request.command.CreateServiceRequestCommand;
 import com.allcitizens.application.request.command.UpdateServiceRequestCommand;
 import com.allcitizens.application.request.result.ServiceRequestResult;
 import com.allcitizens.application.request.usecase.CreateServiceRequestUseCase;
+import com.allcitizens.application.request.usecase.ListServiceRequestsUseCase;
 import com.allcitizens.application.request.usecase.UpdateServiceRequestUseCase;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import com.allcitizens.domain.request.ServiceRequest;
 import com.allcitizens.domain.request.ServiceRequestRepository;
 import jakarta.transaction.Transactional;
 
-import java.util.List;
+import com.allcitizens.application.request.query.ListServiceRequestsQuery;
+import com.allcitizens.domain.common.PageResult;
+
 import java.util.UUID;
 
 public class ServiceRequestApplicationService
-        implements CreateServiceRequestUseCase, UpdateServiceRequestUseCase {
+        implements CreateServiceRequestUseCase, UpdateServiceRequestUseCase, ListServiceRequestsUseCase {
 
     private final ServiceRequestRepository repository;
 
@@ -77,10 +80,17 @@ public class ServiceRequestApplicationService
         return ServiceRequestResult.fromDomain(saved);
     }
 
-    public List<ServiceRequestResult> list(UUID tenantId) {
-        return repository.findAllByTenantId(tenantId).stream()
+    @Override
+    @Transactional
+    public PageResult<ServiceRequestResult> execute(ListServiceRequestsQuery query) {
+        var page = (query.search() == null || query.search().isBlank())
+                ? repository.findAllByTenantIdPaged(query.tenantId(), query.page(), query.size())
+                : repository.searchByTenantIdPaged(
+                        query.tenantId(), query.search().trim(), query.page(), query.size());
+        var content = page.content().stream()
                 .map(ServiceRequestResult::fromDomain)
                 .toList();
+        return new PageResult<>(content, page.totalElements(), page.page(), page.size());
     }
 
     @Transactional

@@ -1,6 +1,9 @@
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/address/AddressTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/audit/AuditLogEntryTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/catalog/CatalogServiceTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/department/DepartmentTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/notification/NotificationRuleTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/notification/NotificationTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/person/PersonTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/request/ServiceRequestTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/domain/src/test/java/com/allcitizens/domain/subdivision/SubdivisionTest.java

@@ -30,7 +30,7 @@ public class CatalogServicePersistenceMapper {
             entity.getDisplayName(),
             entity.getDescription(),
             entity.getSlaDays(),
-            mapPriorityFromEntity(entity.getDefaultPriority()),
+            entity.getDefaultPriority() != null ? entity.getDefaultPriority() : Priority.NORMAL,
             entity.isAllowsAnonymous(),
             entity.isAllowsMultiForward(),
             entity.isVisibleWeb(),
@@ -52,7 +52,7 @@ public class CatalogServicePersistenceMapper {
         entity.setDisplayName(domain.getDisplayName());
         entity.setDescription(domain.getDescription());
         entity.setSlaDays(domain.getSlaDays());
-        entity.setDefaultPriority(domain.getDefaultPriority().name());
+        entity.setDefaultPriority(domain.getDefaultPriority());
         entity.setAllowsAnonymous(domain.isAllowsAnonymous());
         entity.setAllowsMultiForward(domain.isAllowsMultiForward());
         entity.setVisibleWeb(domain.isVisibleWeb());
@@ -62,13 +62,6 @@ public class CatalogServicePersistenceMapper {
         entity.setCreatedAt(domain.getCreatedAt());
         entity.setUpdatedAt(domain.getUpdatedAt());
         return entity;
-    }
-
-    private Priority mapPriorityFromEntity(String raw) {
-        if (raw == null || raw.isBlank()) {
-            return Priority.NORMAL;
-        }
-        return Priority.valueOf(raw.trim());
     }
 
     private Map<String, Object> mapDynamicFieldsFromJson(String json) {

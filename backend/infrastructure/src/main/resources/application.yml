@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9080
 
 spring:
   application:
@@ -27,8 +27,34 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/allcitizens
-          jwk-set-uri: http://localhost:8180/realms/allcitizens/protocol/openid-connect/certs
+          issuer-uri: http://localhost:9180/realms/allcitizens
+          jwk-set-uri: http://localhost:9180/realms/allcitizens/protocol/openid-connect/certs
+
+app:
+  attachments:
+    directory: ${user.dir}/data/attachments
+  audit:
+    # When true, also persist GET /api/v1/** (except /public). Default: only mutations.
+    log-get-requests: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+  show-actuator: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
 
 logging:
   level:

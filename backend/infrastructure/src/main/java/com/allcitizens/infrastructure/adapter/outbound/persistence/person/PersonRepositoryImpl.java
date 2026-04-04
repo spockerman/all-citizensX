@@ -1,5 +1,6 @@
 package com.allcitizens.infrastructure.adapter.outbound.persistence.person;
 
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.person.Person;
 import com.allcitizens.domain.person.PersonRepository;
 import com.allcitizens.domain.person.PersonType;
@@ -8,6 +9,8 @@ import com.allcitizens.infrastructure.adapter.outbound.persistence.person.entity
 import com.allcitizens.infrastructure.adapter.outbound.persistence.person.mapper.PersonPersistenceMapper;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.person.repository.JpaIndividualRepository;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.person.repository.JpaPersonRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -57,6 +60,27 @@ public class PersonRepositoryImpl implements PersonRepository {
     @Override
     public List<Person> findAllByTenantId(UUID tenantId) {
         List<PersonJpaEntity> persons = jpaPersonRepository.findAllByTenantId(tenantId);
+        return mapPersonsWithIndividuals(persons);
+    }
+
+    @Override
+    public PageResult<Person> findAllByTenantIdPaged(UUID tenantId, int page, int size) {
+        var pg = jpaPersonRepository.findAllByTenantId(tenantId, PageRequest.of(page, size));
+        return toPersonPageResult(pg);
+    }
+
+    @Override
+    public PageResult<Person> searchByTenantIdPaged(UUID tenantId, String query, int page, int size) {
+        var pg = jpaPersonRepository.searchByTenantId(tenantId, query, PageRequest.of(page, size));
+        return toPersonPageResult(pg);
+    }
+
+    private PageResult<Person> toPersonPageResult(Page<PersonJpaEntity> page) {
+        var content = mapPersonsWithIndividuals(page.getContent());
+        return new PageResult<>(content, page.getTotalElements(), page.getNumber(), page.getSize());
+    }
+
+    private List<Person> mapPersonsWithIndividuals(List<PersonJpaEntity> persons) {
         if (persons.isEmpty()) {
             return List.of();
         }

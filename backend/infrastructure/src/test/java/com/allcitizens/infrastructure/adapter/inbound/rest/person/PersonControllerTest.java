@@ -1,8 +1,10 @@
 package com.allcitizens.infrastructure.adapter.inbound.rest.person;
 
 import com.allcitizens.application.person.command.CreatePersonCommand;
+import com.allcitizens.application.person.query.ListPersonsQuery;
 import com.allcitizens.application.person.command.UpdatePersonCommand;
 import com.allcitizens.application.person.result.PersonResult;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.application.person.usecase.CreatePersonUseCase;
 import com.allcitizens.application.person.usecase.DeletePersonUseCase;
 import com.allcitizens.application.person.usecase.GetPersonUseCase;
@@ -182,12 +184,13 @@ class PersonControllerTest {
         var result = sampleResult();
         var response = sampleResponse();
 
-        when(listPersonsUseCase.execute(tenantId)).thenReturn(List.of(result));
+        var page = new PageResult<>(List.of(result), 1, 0, 20);
+        when(listPersonsUseCase.execute(any(ListPersonsQuery.class))).thenReturn(page);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/persons").param("tenantId", tenantId.toString()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].fullName").value("Jane Doe"));
+            .andExpect(jsonPath("$.content[0].fullName").value("Jane Doe"));
     }
 
     @Test

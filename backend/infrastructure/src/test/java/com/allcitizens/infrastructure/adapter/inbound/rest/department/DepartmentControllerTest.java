@@ -1,8 +1,10 @@
 package com.allcitizens.infrastructure.adapter.inbound.rest.department;
 
 import com.allcitizens.application.department.command.CreateDepartmentCommand;
+import com.allcitizens.application.department.query.ListDepartmentsQuery;
 import com.allcitizens.application.department.command.UpdateDepartmentCommand;
 import com.allcitizens.application.department.result.DepartmentResult;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.application.department.usecase.CreateDepartmentUseCase;
 import com.allcitizens.application.department.usecase.DeleteDepartmentUseCase;
 import com.allcitizens.application.department.usecase.GetDepartmentUseCase;
@@ -147,12 +149,14 @@ class DepartmentControllerTest {
         var result = sampleResult();
         var response = sampleResponse();
 
-        when(listDepartmentsUseCase.execute(tenantId)).thenReturn(List.of(result));
+        var page = new PageResult<>(List.of(result), 1, 0, 20);
+        when(listDepartmentsUseCase.execute(any(ListDepartmentsQuery.class)))
+                .thenReturn(page);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/departments").param("tenantId", tenantId.toString()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].name").value("Engineering"));
+            .andExpect(jsonPath("$.content[0].name").value("Engineering"));
     }
 
     @Test

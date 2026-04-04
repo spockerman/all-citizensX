@@ -1,10 +1,12 @@
 package com.allcitizens.infrastructure.adapter.inbound.rest.subdivision;
 
+import com.allcitizens.application.subdivision.query.ListSubdivisionsQuery;
 import com.allcitizens.application.subdivision.usecase.CreateSubdivisionUseCase;
 import com.allcitizens.application.subdivision.usecase.DeleteSubdivisionUseCase;
 import com.allcitizens.application.subdivision.usecase.GetSubdivisionUseCase;
 import com.allcitizens.application.subdivision.usecase.ListSubdivisionsUseCase;
 import com.allcitizens.application.subdivision.usecase.UpdateSubdivisionUseCase;
+import com.allcitizens.infrastructure.adapter.inbound.rest.common.dto.PageResponse;
 import com.allcitizens.infrastructure.adapter.inbound.rest.subdivision.dto.CreateSubdivisionRequest;
 import com.allcitizens.infrastructure.adapter.inbound.rest.subdivision.dto.SubdivisionResponse;
 import com.allcitizens.infrastructure.adapter.inbound.rest.subdivision.dto.UpdateSubdivisionRequest;
@@ -19,9 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -57,10 +59,16 @@ public class SubdivisionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SubdivisionResponse>> list() {
-        var results = listSubdivisionsUseCase.execute();
-        var responses = results.stream().map(mapper::toResponse).toList();
-        return ResponseEntity.ok(responses);
+    public ResponseEntity<PageResponse<SubdivisionResponse>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String q) {
+        var safeSize = Math.min(Math.max(size, 1), 100);
+        var query = new ListSubdivisionsQuery(page, safeSize, q);
+        var results = listSubdivisionsUseCase.execute(query);
+        var responses = results.content().stream().map(mapper::toResponse).toList();
+        return ResponseEntity.ok(new PageResponse<>(
+                responses, results.totalElements(), results.totalPages(), results.page(), results.size()));
     }
 
     @GetMapping("/{id}")

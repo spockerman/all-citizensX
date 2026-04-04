@@ -1,10 +1,10 @@
 package com.allcitizens.application.tenant.usecase;
 
+import com.allcitizens.application.tenant.query.ListTenantsQuery;
 import com.allcitizens.application.tenant.result.TenantResult;
-
-import java.util.List;
+import com.allcitizens.domain.common.PageResult;
 
 public interface ListTenantsUseCase {
 
-    List<TenantResult> execute();
+    PageResult<TenantResult> execute(ListTenantsQuery query);
 }

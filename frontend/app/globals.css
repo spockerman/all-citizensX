@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+/* Design tokens — login shell (Material-style palette) + dashboard accents */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-secondary-fixed: #6ffbbe;
+  --color-inverse-surface: #0b0f10;
+  --color-on-tertiary-fixed: #29394e;
+  --color-on-tertiary: #f7f9ff;
+  --color-error: #a83836;
+  --color-surface-container: #eaeff2;
+  --color-inverse-on-surface: #9a9d9f;
+  --color-inverse-primary: #ffffff;
+  --color-secondary-container: #6ffbbe;
+  --color-surface-dim: #d4dbdf;
+  --color-error-container: #fa746f;
+  --color-surface-bright: #f7f9fb;
+  --color-outline: #747c80;
+  --color-primary-dim: #545353;
+  --color-tertiary: #506076;
+  --color-on-tertiary-container: #3c4c61;
+  --color-outline-variant: #acb3b7;
+  --color-tertiary-container: #c8d8f3;
+  --color-on-secondary-fixed-variant: #006947;
+  --color-on-background: #2c3437;
+  --color-primary: #605f5f;
+  --color-tertiary-fixed: #c8d8f3;
+  --color-secondary-fixed-dim: #5fedb0;
+  --color-background: #f7f9fb;
+  --color-surface-container-highest: #dce4e8;
+  --color-surface-variant: #dce4e8;
+  --color-on-surface-variant: #596064;
+  --color-on-primary: #fbf8f8;
+  --color-tertiary-dim: #44546a;
+  --color-on-primary-fixed-variant: #5c5b5b;
+  --color-on-surface: #2c3437;
+  --color-surface-container-low: #f0f4f7;
+  --color-on-secondary-fixed: #004930;
+  --color-primary-container: #e5e2e1;
+  --color-tertiary-fixed-dim: #bacae4;
+  --color-on-secondary: #e6ffee;
+  --color-surface: #f7f9fb;
+  --color-on-error-container: #6e0a12;
+  --color-primary-fixed: #e5e2e1;
+  --color-surface-tint: #605f5f;
+  --color-error-dim: #67040d;
+  --color-surface-container-high: #e3e9ed;
+  --color-on-error: #fff7f6;
+  --color-on-secondary-container: #005e3f;
+  --color-secondary-dim: #005f40;
+  --color-primary-fixed-dim: #d6d4d3;
+  --color-secondary: #006d4a;
+  --color-on-tertiary-fixed-variant: #46556b;
+  --color-on-primary-fixed: #403f3f;
+  --color-on-primary-container: #525151;
+  --color-surface-container-lowest: #ffffff;
+  /* Dashboard shell — slightly warmer app background (reference layout) */
+  --color-app-bg: #f1f1ee;
+  /* Accent for metrics/charts (aligned with institutional green) */
+  --color-accent: #006d4a;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #dce4e8;
+  border-radius: 10px;
+}
+
+html.light,
+html {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}

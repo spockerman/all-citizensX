@@ -2,16 +2,18 @@ package com.allcitizens.application.subject.service;
 
 import com.allcitizens.application.subject.command.CreateSubjectCommand;
 import com.allcitizens.application.subject.command.UpdateSubjectCommand;
+import com.allcitizens.application.subject.query.ListSubjectsQuery;
 import com.allcitizens.application.subject.result.SubjectResult;
+import com.allcitizens.application.subject.usecase.ListSubjectsUseCase;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import com.allcitizens.domain.subject.Subject;
 import com.allcitizens.domain.subject.SubjectRepository;
 import jakarta.transaction.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
-public class SubjectApplicationService {
+public class SubjectApplicationService implements ListSubjectsUseCase {
 
     private final SubjectRepository subjectRepository;
 
@@ -65,10 +67,14 @@ public class SubjectApplicationService {
         return SubjectResult.fromDomain(subject);
     }
 
-    public List<SubjectResult> listByTenantId(UUID tenantId) {
-        return subjectRepository.findAllByTenantId(tenantId).stream()
-            .map(SubjectResult::fromDomain)
-            .toList();
+    @Override
+    public PageResult<SubjectResult> execute(ListSubjectsQuery query) {
+        var page = (query.search() == null || query.search().isBlank())
+                ? subjectRepository.findAllByTenantIdPaged(query.tenantId(), query.page(), query.size())
+                : subjectRepository.searchByTenantIdPaged(
+                        query.tenantId(), query.search().trim(), query.page(), query.size());
+        var content = page.content().stream().map(SubjectResult::fromDomain).toList();
+        return new PageResult<>(content, page.totalElements(), page.page(), page.size());
     }
 
     @Transactional

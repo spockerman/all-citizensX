@@ -1,11 +1,10 @@
 package com.allcitizens.application.catalog.usecase;
 
+import com.allcitizens.application.catalog.query.ListCatalogServicesQuery;
 import com.allcitizens.application.catalog.result.CatalogServiceResult;
-
-import java.util.List;
-import java.util.UUID;
+import com.allcitizens.domain.common.PageResult;
 
 public interface ListCatalogServicesUseCase {
 
-    List<CatalogServiceResult> execute(UUID tenantId);
+    PageResult<CatalogServiceResult> execute(ListCatalogServicesQuery query);
 }

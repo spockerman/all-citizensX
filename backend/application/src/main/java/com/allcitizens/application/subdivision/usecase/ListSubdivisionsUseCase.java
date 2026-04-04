@@ -1,10 +1,10 @@
 package com.allcitizens.application.subdivision.usecase;
 
+import com.allcitizens.application.subdivision.query.ListSubdivisionsQuery;
 import com.allcitizens.application.subdivision.result.SubdivisionResult;
-
-import java.util.List;
+import com.allcitizens.domain.common.PageResult;
 
 public interface ListSubdivisionsUseCase {
 
-    List<SubdivisionResult> execute();
+    PageResult<SubdivisionResult> execute(ListSubdivisionsQuery query);
 }

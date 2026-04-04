@@ -1,8 +1,10 @@
 package com.allcitizens.application.subject.service;
 
 import com.allcitizens.application.subject.command.CreateSubjectCommand;
+import com.allcitizens.application.subject.query.ListSubjectsQuery;
 import com.allcitizens.application.subject.command.UpdateSubjectCommand;
 import com.allcitizens.domain.exception.EntityNotFoundException;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.subject.Subject;
 import com.allcitizens.domain.subject.SubjectRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -137,12 +139,13 @@ class SubjectApplicationServiceTest {
         var s1 = Subject.create(tenantId, "A");
         var s2 = Subject.create(tenantId, "B");
 
-        when(subjectRepository.findAllByTenantId(tenantId)).thenReturn(List.of(s1, s2));
+        when(subjectRepository.findAllByTenantIdPaged(tenantId, 0, 20))
+            .thenReturn(new PageResult<>(List.of(s1, s2), 2, 0, 20));
 
-        var results = service.listByTenantId(tenantId);
+        var results = service.execute(new ListSubjectsQuery(tenantId, 0, 20, null));
 
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).name()).isEqualTo("A");
-        assertThat(results.get(1).name()).isEqualTo("B");
+        assertThat(results.content()).hasSize(2);
+        assertThat(results.content().get(0).name()).isEqualTo("A");
+        assertThat(results.content().get(1).name()).isEqualTo("B");
     }
 }

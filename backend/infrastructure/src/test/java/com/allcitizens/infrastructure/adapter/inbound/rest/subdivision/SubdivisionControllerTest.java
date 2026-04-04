@@ -1,8 +1,10 @@
 package com.allcitizens.infrastructure.adapter.inbound.rest.subdivision;
 
 import com.allcitizens.application.subdivision.command.CreateSubdivisionCommand;
+import com.allcitizens.application.subdivision.query.ListSubdivisionsQuery;
 import com.allcitizens.application.subdivision.command.UpdateSubdivisionCommand;
 import com.allcitizens.application.subdivision.result.SubdivisionResult;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.application.subdivision.usecase.CreateSubdivisionUseCase;
 import com.allcitizens.application.subdivision.usecase.DeleteSubdivisionUseCase;
 import com.allcitizens.application.subdivision.usecase.GetSubdivisionUseCase;
@@ -123,12 +125,13 @@ class SubdivisionControllerTest {
         var result = sampleResult();
         var response = sampleResponse();
 
-        when(listSubdivisionsUseCase.execute()).thenReturn(List.of(result));
+        var page = new PageResult<>(List.of(result), 1, 0, 20);
+        when(listSubdivisionsUseCase.execute(any(ListSubdivisionsQuery.class))).thenReturn(page);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/subdivisions"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].name").value("North"));
+            .andExpect(jsonPath("$.content[0].name").value("North"));
     }
 
     @Test

@@ -1,0 +1,23 @@
+# Profile "docker": stack Compose (app + Postgres + Keycloak no mesmo network).
+# HTTP da API: server.port 9080 (application.yml). Keycloak no host: localhost:9180 → contentor 8080.
+# Jwt: issuer = URL público Keycloak; jwk-set-uri = hostname interno keycloak:8080 .
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/allcitizens?stringtype=unspecified
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9180/realms/allcitizens
+          jwk-set-uri: http://keycloak:8080/realms/allcitizens/protocol/openid-connect/certs
+
+app:
+  attachments:
+    directory: /data/attachments
+
+logging:
+  level:
+    com.allcitizens: INFO
+    org.hibernate.SQL: WARN

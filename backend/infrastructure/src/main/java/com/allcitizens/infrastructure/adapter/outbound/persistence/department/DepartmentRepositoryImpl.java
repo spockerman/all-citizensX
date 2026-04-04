@@ -1,9 +1,13 @@
 package com.allcitizens.infrastructure.adapter.outbound.persistence.department;
 
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.department.Department;
 import com.allcitizens.domain.department.DepartmentRepository;
+import com.allcitizens.infrastructure.adapter.outbound.persistence.department.entity.DepartmentJpaEntity;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.department.mapper.DepartmentPersistenceMapper;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.department.repository.JpaDepartmentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -39,6 +43,21 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
         return jpaRepository.findAllByTenantId(tenantId).stream()
             .map(mapper::toDomain)
             .toList();
+    }
+
+    @Override
+    public PageResult<Department> findAllByTenantIdPaged(UUID tenantId, int page, int size) {
+        return toPageResult(jpaRepository.findAllByTenantId(tenantId, PageRequest.of(page, size)));
+    }
+
+    @Override
+    public PageResult<Department> searchByTenantIdPaged(UUID tenantId, String query, int page, int size) {
+        return toPageResult(jpaRepository.searchByTenantId(tenantId, query, PageRequest.of(page, size)));
+    }
+
+    private PageResult<Department> toPageResult(Page<DepartmentJpaEntity> page) {
+        var content = page.getContent().stream().map(mapper::toDomain).toList();
+        return new PageResult<>(content, page.getTotalElements(), page.getNumber(), page.getSize());
     }
 
     @Override

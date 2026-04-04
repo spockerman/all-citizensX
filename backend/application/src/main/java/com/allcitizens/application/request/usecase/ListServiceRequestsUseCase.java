@@ -1,11 +1,10 @@
 package com.allcitizens.application.request.usecase;
 
+import com.allcitizens.application.request.query.ListServiceRequestsQuery;
 import com.allcitizens.application.request.result.ServiceRequestResult;
-
-import java.util.List;
-import java.util.UUID;
+import com.allcitizens.domain.common.PageResult;
 
 public interface ListServiceRequestsUseCase {
 
-    List<ServiceRequestResult> execute(UUID tenantId);
+    PageResult<ServiceRequestResult> execute(ListServiceRequestsQuery query);
 }

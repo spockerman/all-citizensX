@@ -2,13 +2,10 @@ package com.allcitizens.infrastructure.adapter.inbound.rest.request;
 
 import com.allcitizens.application.request.command.CreateServiceRequestCommand;
 import com.allcitizens.application.request.command.UpdateServiceRequestCommand;
+import com.allcitizens.application.request.query.ListServiceRequestsQuery;
 import com.allcitizens.application.request.result.ServiceRequestResult;
-import com.allcitizens.application.request.usecase.CancelServiceRequestUseCase;
-import com.allcitizens.application.request.usecase.CloseServiceRequestUseCase;
-import com.allcitizens.application.request.usecase.CreateServiceRequestUseCase;
-import com.allcitizens.application.request.usecase.GetServiceRequestUseCase;
-import com.allcitizens.application.request.usecase.ListServiceRequestsUseCase;
-import com.allcitizens.application.request.usecase.UpdateServiceRequestUseCase;
+import com.allcitizens.application.request.service.ServiceRequestApplicationService;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.request.Channel;
 import com.allcitizens.domain.request.Priority;
 import com.allcitizens.domain.request.RequestStatus;
@@ -47,22 +44,7 @@ class ServiceRequestControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private CreateServiceRequestUseCase createUseCase;
-
-    @MockBean
-    private GetServiceRequestUseCase getUseCase;
-
-    @MockBean
-    private UpdateServiceRequestUseCase updateUseCase;
-
-    @MockBean
-    private ListServiceRequestsUseCase listUseCase;
-
-    @MockBean
-    private CloseServiceRequestUseCase closeUseCase;
-
-    @MockBean
-    private CancelServiceRequestUseCase cancelUseCase;
+    private ServiceRequestApplicationService serviceRequestApplicationService;
 
     @MockBean
     private ServiceRequestRestMapper mapper;
@@ -77,7 +59,7 @@ class ServiceRequestControllerTest {
 
         when(mapper.toCommand(any(com.allcitizens.infrastructure.adapter.inbound.rest.request.dto.CreateServiceRequestRequest.class)))
                 .thenReturn(buildCreateCommand());
-        when(createUseCase.execute(any(CreateServiceRequestCommand.class))).thenReturn(result);
+        when(serviceRequestApplicationService.execute(any(CreateServiceRequestCommand.class))).thenReturn(result);
         when(mapper.toResponse(result)).thenReturn(response);
 
         var body = Map.of(
@@ -101,7 +83,7 @@ class ServiceRequestControllerTest {
         var result = buildResult(RequestStatus.OPEN);
         var response = buildResponse("OPEN");
 
-        when(getUseCase.execute(requestId)).thenReturn(result);
+        when(serviceRequestApplicationService.get(requestId)).thenReturn(result);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/service-requests/{id}", requestId))
@@ -114,13 +96,16 @@ class ServiceRequestControllerTest {
         var result = buildResult(RequestStatus.OPEN);
         var response = buildResponse("OPEN");
 
-        when(listUseCase.execute(tenantId)).thenReturn(List.of(result));
+        var page = new PageResult<>(List.of(result), 1, 0, 20);
+        when(serviceRequestApplicationService.execute(org.mockito.ArgumentMatchers.any(ListServiceRequestsQuery.class)))
+                .thenReturn(page);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/service-requests")
                         .param("tenantId", tenantId.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].protocol").value("PROTO-001"));
+                .andExpect(jsonPath("$.content[0].protocol").value("PROTO-001"))
+                .andExpect(jsonPath("$.totalElements").value(1));
     }
 
     @Test
@@ -130,7 +115,8 @@ class ServiceRequestControllerTest {
 
         when(mapper.toCommand(any(com.allcitizens.infrastructure.adapter.inbound.rest.request.dto.UpdateServiceRequestRequest.class)))
                 .thenReturn(new UpdateServiceRequestCommand("Updated", null, null, null, null));
-        when(updateUseCase.execute(any(UUID.class), any(UpdateServiceRequestCommand.class))).thenReturn(result);
+        when(serviceRequestApplicationService.execute(any(UUID.class), any(UpdateServiceRequestCommand.class)))
+                .thenReturn(result);
         when(mapper.toResponse(result)).thenReturn(response);
 
         var body = Map.of("description", "Updated");
@@ -146,7 +132,7 @@ class ServiceRequestControllerTest {
         var result = buildResult(RequestStatus.CLOSED);
         var response = buildResponse("CLOSED");
 
-        when(closeUseCase.execute(requestId)).thenReturn(result);
+        when(serviceRequestApplicationService.close(requestId)).thenReturn(result);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/service-requests/{id}/close", requestId))
@@ -159,7 +145,7 @@ class ServiceRequestControllerTest {
         var result = buildResult(RequestStatus.CANCELLED);
         var response = buildResponse("CANCELLED");
 
-        when(cancelUseCase.execute(requestId)).thenReturn(result);
+        when(serviceRequestApplicationService.cancel(requestId)).thenReturn(result);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/service-requests/{id}/cancel", requestId))

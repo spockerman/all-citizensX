@@ -1,8 +1,10 @@
 package com.allcitizens.infrastructure.adapter.inbound.rest.subject;
 
 import com.allcitizens.application.subject.command.CreateSubjectCommand;
+import com.allcitizens.application.subject.query.ListSubjectsQuery;
 import com.allcitizens.application.subject.command.UpdateSubjectCommand;
 import com.allcitizens.application.subject.result.SubjectResult;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.application.subject.usecase.CreateSubjectUseCase;
 import com.allcitizens.application.subject.usecase.DeleteSubjectUseCase;
 import com.allcitizens.application.subject.usecase.GetSubjectUseCase;
@@ -140,12 +142,13 @@ class SubjectControllerTest {
         var result = sampleResult();
         var response = sampleResponse();
 
-        when(listSubjectsUseCase.execute(tenantId)).thenReturn(List.of(result));
+        var page = new PageResult<>(List.of(result), 1, 0, 20);
+        when(listSubjectsUseCase.execute(any(ListSubjectsQuery.class))).thenReturn(page);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/subjects").param("tenantId", tenantId.toString()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].name").value("Water"));
+            .andExpect(jsonPath("$.content[0].name").value("Water"));
     }
 
     @Test

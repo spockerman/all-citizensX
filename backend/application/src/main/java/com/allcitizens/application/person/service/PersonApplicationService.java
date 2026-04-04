@@ -2,17 +2,19 @@ package com.allcitizens.application.person.service;
 
 import com.allcitizens.application.person.command.CreatePersonCommand;
 import com.allcitizens.application.person.command.UpdatePersonCommand;
+import com.allcitizens.application.person.query.ListPersonsQuery;
 import com.allcitizens.application.person.result.PersonResult;
+import com.allcitizens.application.person.usecase.ListPersonsUseCase;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import com.allcitizens.domain.person.Gender;
 import com.allcitizens.domain.person.Person;
 import com.allcitizens.domain.person.PersonRepository;
 import jakarta.transaction.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
-public class PersonApplicationService {
+public class PersonApplicationService implements ListPersonsUseCase {
 
     private final PersonRepository personRepository;
 
@@ -84,10 +86,14 @@ public class PersonApplicationService {
         return PersonResult.fromDomain(person);
     }
 
-    public List<PersonResult> listByTenantId(UUID tenantId) {
-        return personRepository.findAllByTenantId(tenantId).stream()
-            .map(PersonResult::fromDomain)
-            .toList();
+    @Override
+    public PageResult<PersonResult> execute(ListPersonsQuery query) {
+        var page = (query.search() == null || query.search().isBlank())
+                ? personRepository.findAllByTenantIdPaged(query.tenantId(), query.page(), query.size())
+                : personRepository.searchByTenantIdPaged(
+                        query.tenantId(), query.search().trim(), query.page(), query.size());
+        var content = page.content().stream().map(PersonResult::fromDomain).toList();
+        return new PageResult<>(content, page.totalElements(), page.page(), page.size());
     }
 
     @Transactional

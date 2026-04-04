@@ -1,7 +1,9 @@
 package com.allcitizens.application.tenant.service;
 
 import com.allcitizens.application.tenant.command.CreateTenantCommand;
+import com.allcitizens.application.tenant.query.ListTenantsQuery;
 import com.allcitizens.application.tenant.command.UpdateTenantCommand;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.exception.BusinessRuleException;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import com.allcitizens.domain.tenant.Tenant;
@@ -122,13 +124,14 @@ class TenantApplicationServiceTest {
         var tenant1 = Tenant.create("City A", "CA");
         var tenant2 = Tenant.create("City B", "CB");
 
-        when(tenantRepository.findAll()).thenReturn(List.of(tenant1, tenant2));
+        when(tenantRepository.findAllPaged(0, 20))
+            .thenReturn(new PageResult<>(List.of(tenant1, tenant2), 2, 0, 20));
 
-        var results = service.execute();
+        var results = service.execute(new ListTenantsQuery(0, 20, null));
 
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).name()).isEqualTo("City A");
-        assertThat(results.get(1).name()).isEqualTo("City B");
+        assertThat(results.content()).hasSize(2);
+        assertThat(results.content().get(0).name()).isEqualTo("City A");
+        assertThat(results.content().get(1).name()).isEqualTo("City B");
     }
 
     @Test

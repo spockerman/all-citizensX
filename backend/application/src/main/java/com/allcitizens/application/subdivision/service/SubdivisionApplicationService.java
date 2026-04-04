@@ -2,16 +2,18 @@ package com.allcitizens.application.subdivision.service;
 
 import com.allcitizens.application.subdivision.command.CreateSubdivisionCommand;
 import com.allcitizens.application.subdivision.command.UpdateSubdivisionCommand;
+import com.allcitizens.application.subdivision.query.ListSubdivisionsQuery;
 import com.allcitizens.application.subdivision.result.SubdivisionResult;
+import com.allcitizens.application.subdivision.usecase.ListSubdivisionsUseCase;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import com.allcitizens.domain.subdivision.Subdivision;
 import com.allcitizens.domain.subdivision.SubdivisionRepository;
 import jakarta.transaction.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
-public class SubdivisionApplicationService {
+public class SubdivisionApplicationService implements ListSubdivisionsUseCase {
 
     private final SubdivisionRepository subdivisionRepository;
 
@@ -52,10 +54,13 @@ public class SubdivisionApplicationService {
         return SubdivisionResult.fromDomain(subdivision);
     }
 
-    public List<SubdivisionResult> listAll() {
-        return subdivisionRepository.findAll().stream()
-            .map(SubdivisionResult::fromDomain)
-            .toList();
+    @Override
+    public PageResult<SubdivisionResult> execute(ListSubdivisionsQuery query) {
+        var page = (query.search() == null || query.search().isBlank())
+                ? subdivisionRepository.findAllPaged(query.page(), query.size())
+                : subdivisionRepository.searchPaged(query.search().trim(), query.page(), query.size());
+        var content = page.content().stream().map(SubdivisionResult::fromDomain).toList();
+        return new PageResult<>(content, page.totalElements(), page.page(), page.size());
     }
 
     @Transactional

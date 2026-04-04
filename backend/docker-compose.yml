@@ -10,6 +10,33 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U allcitizens -d allcitizens"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Garante CREATE DATABASE keycloak em volumes já existentes (initdb.d só corre na 1.ª vez).
+  keycloak-db-init:
+    image: postgres:16-alpine
+    container_name: allcitizens-keycloak-db-init
+    environment:
+      PGPASSWORD: allcitizens
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        until pg_isready -h postgres -p 5432 -U allcitizens; do sleep 1; done
+        if psql -h postgres -U allcitizens -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = 'keycloak'" | grep -q 1; then
+          echo "Database keycloak already exists."
+        else
+          psql -h postgres -U allcitizens -d postgres -c 'CREATE DATABASE keycloak OWNER allcitizens;'
+          echo "Created database keycloak."
+        fi
+    restart: "no"
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0
@@ -17,16 +44,50 @@ services:
     command: start-dev
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/allcitizens
-      KC_DB_SCHEMA: keycloak
+      # Base dedicada (criada em docker/postgres/init); não partilhar schema com Flyway da app
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
       KC_DB_USERNAME: allcitizens
       KC_DB_PASSWORD: allcitizens
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     ports:
-      - "8180:8080"
+      - "9180:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      keycloak-db-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 90s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: allcitizens-app:local
+    container_name: allcitizens-app
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "9080:9080"
+    volumes:
+      - attachments_data:/data/attachments
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:9080/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 120s
 
 volumes:
   pgdata:
+  attachments_data:

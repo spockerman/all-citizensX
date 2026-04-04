@@ -2,8 +2,12 @@ package com.allcitizens.infrastructure.adapter.outbound.persistence.catalog;
 
 import com.allcitizens.domain.catalog.CatalogService;
 import com.allcitizens.domain.catalog.CatalogServiceRepository;
+import com.allcitizens.domain.common.PageResult;
+import com.allcitizens.infrastructure.adapter.outbound.persistence.catalog.entity.CatalogServiceJpaEntity;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.catalog.mapper.CatalogServicePersistenceMapper;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.catalog.repository.JpaCatalogServiceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -39,6 +43,21 @@ public class CatalogServiceRepositoryImpl implements CatalogServiceRepository {
         return jpaRepository.findAllByTenantId(tenantId).stream()
             .map(mapper::toDomain)
             .toList();
+    }
+
+    @Override
+    public PageResult<CatalogService> findAllByTenantIdPaged(UUID tenantId, int page, int size) {
+        return toPageResult(jpaRepository.findAllByTenantId(tenantId, PageRequest.of(page, size)));
+    }
+
+    @Override
+    public PageResult<CatalogService> searchByTenantIdPaged(UUID tenantId, String query, int page, int size) {
+        return toPageResult(jpaRepository.searchByTenantId(tenantId, query, PageRequest.of(page, size)));
+    }
+
+    private PageResult<CatalogService> toPageResult(Page<CatalogServiceJpaEntity> page) {
+        var content = page.getContent().stream().map(mapper::toDomain).toList();
+        return new PageResult<>(content, page.getTotalElements(), page.getNumber(), page.getSize());
     }
 
     @Override

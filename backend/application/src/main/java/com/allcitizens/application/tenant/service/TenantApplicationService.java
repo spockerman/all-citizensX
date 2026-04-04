@@ -2,18 +2,19 @@ package com.allcitizens.application.tenant.service;
 
 import com.allcitizens.application.tenant.command.CreateTenantCommand;
 import com.allcitizens.application.tenant.command.UpdateTenantCommand;
+import com.allcitizens.application.tenant.query.ListTenantsQuery;
 import com.allcitizens.application.tenant.result.TenantResult;
 import com.allcitizens.application.tenant.usecase.CreateTenantUseCase;
 import com.allcitizens.application.tenant.usecase.GetTenantUseCase;
 import com.allcitizens.application.tenant.usecase.ListTenantsUseCase;
 import com.allcitizens.application.tenant.usecase.UpdateTenantUseCase;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.exception.BusinessRuleException;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import com.allcitizens.domain.tenant.Tenant;
 import com.allcitizens.domain.tenant.TenantRepository;
 import jakarta.transaction.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 public class TenantApplicationService implements CreateTenantUseCase,
@@ -67,10 +68,12 @@ public class TenantApplicationService implements CreateTenantUseCase,
     }
 
     @Override
-    public List<TenantResult> execute() {
-        return tenantRepository.findAll().stream()
-            .map(TenantResult::fromDomain)
-            .toList();
+    public PageResult<TenantResult> execute(ListTenantsQuery query) {
+        var page = (query.search() == null || query.search().isBlank())
+                ? tenantRepository.findAllPaged(query.page(), query.size())
+                : tenantRepository.searchPaged(query.search().trim(), query.page(), query.size());
+        var content = page.content().stream().map(TenantResult::fromDomain).toList();
+        return new PageResult<>(content, page.totalElements(), page.page(), page.size());
     }
 
     @Transactional

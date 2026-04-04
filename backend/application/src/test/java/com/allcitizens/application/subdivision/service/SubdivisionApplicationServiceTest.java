@@ -1,8 +1,10 @@
 package com.allcitizens.application.subdivision.service;
 
 import com.allcitizens.application.subdivision.command.CreateSubdivisionCommand;
+import com.allcitizens.application.subdivision.query.ListSubdivisionsQuery;
 import com.allcitizens.application.subdivision.command.UpdateSubdivisionCommand;
 import com.allcitizens.domain.exception.EntityNotFoundException;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.subdivision.Subdivision;
 import com.allcitizens.domain.subdivision.SubdivisionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,12 +113,13 @@ class SubdivisionApplicationServiceTest {
         var a = Subdivision.create("A");
         var b = Subdivision.create("B");
 
-        when(subdivisionRepository.findAll()).thenReturn(List.of(a, b));
+        when(subdivisionRepository.findAllPaged(0, 20))
+            .thenReturn(new PageResult<>(List.of(a, b), 2, 0, 20));
 
-        var results = service.listAll();
+        var results = service.execute(new ListSubdivisionsQuery(0, 20, null));
 
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).name()).isEqualTo("A");
-        assertThat(results.get(1).name()).isEqualTo("B");
+        assertThat(results.content()).hasSize(2);
+        assertThat(results.content().get(0).name()).isEqualTo("A");
+        assertThat(results.content().get(1).name()).isEqualTo("B");
     }
 }

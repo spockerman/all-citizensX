@@ -1,10 +1,12 @@
 package com.allcitizens.infrastructure.adapter.inbound.rest.department;
 
+import com.allcitizens.application.department.query.ListDepartmentsQuery;
 import com.allcitizens.application.department.usecase.CreateDepartmentUseCase;
 import com.allcitizens.application.department.usecase.DeleteDepartmentUseCase;
 import com.allcitizens.application.department.usecase.GetDepartmentUseCase;
 import com.allcitizens.application.department.usecase.ListDepartmentsUseCase;
 import com.allcitizens.application.department.usecase.UpdateDepartmentUseCase;
+import com.allcitizens.infrastructure.adapter.inbound.rest.common.dto.PageResponse;
 import com.allcitizens.infrastructure.adapter.inbound.rest.department.dto.CreateDepartmentRequest;
 import com.allcitizens.infrastructure.adapter.inbound.rest.department.dto.DepartmentResponse;
 import com.allcitizens.infrastructure.adapter.inbound.rest.department.dto.UpdateDepartmentRequest;
@@ -22,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -58,10 +59,17 @@ public class DepartmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DepartmentResponse>> list(@RequestParam UUID tenantId) {
-        var results = listDepartmentsUseCase.execute(tenantId);
-        var responses = results.stream().map(mapper::toResponse).toList();
-        return ResponseEntity.ok(responses);
+    public ResponseEntity<PageResponse<DepartmentResponse>> list(
+            @RequestParam UUID tenantId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String q) {
+        var safeSize = Math.min(Math.max(size, 1), 100);
+        var query = new ListDepartmentsQuery(tenantId, page, safeSize, q);
+        var results = listDepartmentsUseCase.execute(query);
+        var responses = results.content().stream().map(mapper::toResponse).toList();
+        return ResponseEntity.ok(new PageResponse<>(
+                responses, results.totalElements(), results.totalPages(), results.page(), results.size()));
     }
 
     @GetMapping("/{id}")

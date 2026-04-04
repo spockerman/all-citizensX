@@ -1,9 +1,13 @@
 package com.allcitizens.infrastructure.adapter.outbound.persistence.subject;
 
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.subject.Subject;
 import com.allcitizens.domain.subject.SubjectRepository;
+import com.allcitizens.infrastructure.adapter.outbound.persistence.subject.entity.SubjectJpaEntity;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.subject.mapper.SubjectPersistenceMapper;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.subject.repository.JpaSubjectRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -39,6 +43,21 @@ public class SubjectRepositoryImpl implements SubjectRepository {
         return jpaRepository.findAllByTenantId(tenantId).stream()
             .map(mapper::toDomain)
             .toList();
+    }
+
+    @Override
+    public PageResult<Subject> findAllByTenantIdPaged(UUID tenantId, int page, int size) {
+        return toPageResult(jpaRepository.findAllByTenantId(tenantId, PageRequest.of(page, size)));
+    }
+
+    @Override
+    public PageResult<Subject> searchByTenantIdPaged(UUID tenantId, String query, int page, int size) {
+        return toPageResult(jpaRepository.searchByTenantId(tenantId, query, PageRequest.of(page, size)));
+    }
+
+    private PageResult<Subject> toPageResult(Page<SubjectJpaEntity> page) {
+        var content = page.getContent().stream().map(mapper::toDomain).toList();
+        return new PageResult<>(content, page.getTotalElements(), page.getNumber(), page.getSize());
     }
 
     @Override

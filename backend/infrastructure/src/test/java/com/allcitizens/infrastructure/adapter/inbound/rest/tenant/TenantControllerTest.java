@@ -2,12 +2,10 @@ package com.allcitizens.infrastructure.adapter.inbound.rest.tenant;
 
 import com.allcitizens.application.tenant.command.CreateTenantCommand;
 import com.allcitizens.application.tenant.command.UpdateTenantCommand;
+import com.allcitizens.application.tenant.query.ListTenantsQuery;
 import com.allcitizens.application.tenant.result.TenantResult;
-import com.allcitizens.application.tenant.usecase.CreateTenantUseCase;
-import com.allcitizens.application.tenant.usecase.DeleteTenantUseCase;
-import com.allcitizens.application.tenant.usecase.GetTenantUseCase;
-import com.allcitizens.application.tenant.usecase.ListTenantsUseCase;
-import com.allcitizens.application.tenant.usecase.UpdateTenantUseCase;
+import com.allcitizens.application.tenant.service.TenantApplicationService;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.infrastructure.adapter.inbound.rest.tenant.dto.TenantResponse;
 import com.allcitizens.infrastructure.adapter.inbound.rest.tenant.mapper.TenantRestMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,19 +44,7 @@ class TenantControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private CreateTenantUseCase createTenantUseCase;
-
-    @MockBean
-    private GetTenantUseCase getTenantUseCase;
-
-    @MockBean
-    private UpdateTenantUseCase updateTenantUseCase;
-
-    @MockBean
-    private ListTenantsUseCase listTenantsUseCase;
-
-    @MockBean
-    private DeleteTenantUseCase deleteTenantUseCase;
+    private TenantApplicationService tenantApplicationService;
 
     @MockBean
     private TenantRestMapper mapper;
@@ -85,7 +71,7 @@ class TenantControllerTest {
 
         when(mapper.toCommand(any(com.allcitizens.infrastructure.adapter.inbound.rest.tenant.dto.CreateTenantRequest.class)))
             .thenReturn(new CreateTenantCommand("City of Springfield", "SPR"));
-        when(createTenantUseCase.execute(any(CreateTenantCommand.class))).thenReturn(result);
+        when(tenantApplicationService.execute(any(CreateTenantCommand.class))).thenReturn(result);
         when(mapper.toResponse(result)).thenReturn(response);
 
         var requestBody = """
@@ -108,12 +94,13 @@ class TenantControllerTest {
         var result = sampleResult();
         var response = sampleResponse();
 
-        when(listTenantsUseCase.execute()).thenReturn(List.of(result));
-        when(mapper.toResponseList(List.of(result))).thenReturn(List.of(response));
+        var page = new PageResult<>(List.of(result), 1, 0, 20);
+        when(tenantApplicationService.execute(any(ListTenantsQuery.class))).thenReturn(page);
+        when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/tenants"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].name").value("City of Springfield"));
+            .andExpect(jsonPath("$.content[0].name").value("City of Springfield"));
     }
 
     @Test
@@ -121,7 +108,7 @@ class TenantControllerTest {
         var result = sampleResult();
         var response = sampleResponse();
 
-        when(getTenantUseCase.execute(tenantId)).thenReturn(result);
+        when(tenantApplicationService.execute(tenantId)).thenReturn(result);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/tenants/{id}", tenantId))
@@ -137,7 +124,7 @@ class TenantControllerTest {
 
         when(mapper.toCommand(any(com.allcitizens.infrastructure.adapter.inbound.rest.tenant.dto.UpdateTenantRequest.class)))
             .thenReturn(new UpdateTenantCommand("City of Springfield", null));
-        when(updateTenantUseCase.execute(eq(tenantId), any(UpdateTenantCommand.class))).thenReturn(result);
+        when(tenantApplicationService.execute(eq(tenantId), any(UpdateTenantCommand.class))).thenReturn(result);
         when(mapper.toResponse(result)).thenReturn(response);
 
         var requestBody = """
@@ -158,6 +145,6 @@ class TenantControllerTest {
         mockMvc.perform(delete("/api/v1/tenants/{id}", tenantId))
             .andExpect(status().isNoContent());
 
-        verify(deleteTenantUseCase).execute(tenantId);
+        verify(tenantApplicationService).delete(tenantId);
     }
 }

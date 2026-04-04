@@ -1,6 +1,8 @@
 package com.allcitizens.application.request.service;
 
 import com.allcitizens.application.request.command.CreateServiceRequestCommand;
+import com.allcitizens.application.request.query.ListServiceRequestsQuery;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import com.allcitizens.domain.request.Channel;
 import com.allcitizens.domain.request.Priority;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -89,6 +92,21 @@ class ServiceRequestApplicationServiceTest {
 
         assertThat(result.status()).isEqualTo(RequestStatus.CLOSED);
         assertThat(result.closedAt()).isNotNull();
+    }
+
+    @Test
+    void shouldListServiceRequestsPaginated() {
+        var tenantId = UUID.randomUUID();
+        var domain = ServiceRequest.create(tenantId, "PROTO-PAGE",
+                UUID.randomUUID(), Channel.PHONE, Priority.NORMAL, "Desc");
+        when(repository.findAllByTenantIdPaged(tenantId, 0, 10))
+                .thenReturn(new PageResult<>(List.of(domain), 1, 0, 10));
+
+        var page = service.execute(new ListServiceRequestsQuery(tenantId, 0, 10, null));
+
+        assertThat(page.content()).hasSize(1);
+        assertThat(page.totalElements()).isEqualTo(1);
+        assertThat(page.content().get(0).protocol()).isEqualTo("PROTO-PAGE");
     }
 
     @Test

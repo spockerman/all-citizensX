@@ -1,8 +1,10 @@
 package com.allcitizens.application.person.service;
 
 import com.allcitizens.application.person.command.CreatePersonCommand;
+import com.allcitizens.application.person.query.ListPersonsQuery;
 import com.allcitizens.application.person.command.UpdatePersonCommand;
 import com.allcitizens.domain.exception.EntityNotFoundException;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.person.Person;
 import com.allcitizens.domain.person.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -143,12 +145,13 @@ class PersonApplicationServiceTest {
         var p1 = Person.createIndividual(tenantId, "A", null, null);
         var p2 = Person.createIndividual(tenantId, "B", null, null);
 
-        when(personRepository.findAllByTenantId(tenantId)).thenReturn(List.of(p1, p2));
+        when(personRepository.findAllByTenantIdPaged(tenantId, 0, 20))
+            .thenReturn(new PageResult<>(List.of(p1, p2), 2, 0, 20));
 
-        var results = service.listByTenantId(tenantId);
+        var results = service.execute(new ListPersonsQuery(tenantId, 0, 20, null));
 
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).fullName()).isEqualTo("A");
-        assertThat(results.get(1).fullName()).isEqualTo("B");
+        assertThat(results.content()).hasSize(2);
+        assertThat(results.content().get(0).fullName()).isEqualTo("A");
+        assertThat(results.content().get(1).fullName()).isEqualTo("B");
     }
 }

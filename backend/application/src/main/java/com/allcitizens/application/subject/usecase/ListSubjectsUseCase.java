@@ -1,11 +1,10 @@
 package com.allcitizens.application.subject.usecase;
 
+import com.allcitizens.application.subject.query.ListSubjectsQuery;
 import com.allcitizens.application.subject.result.SubjectResult;
-
-import java.util.List;
-import java.util.UUID;
+import com.allcitizens.domain.common.PageResult;
 
 public interface ListSubjectsUseCase {
 
-    List<SubjectResult> execute(UUID tenantId);
+    PageResult<SubjectResult> execute(ListSubjectsQuery query);
 }

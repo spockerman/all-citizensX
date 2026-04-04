@@ -1,6 +1,6 @@
 # All Citizens — Project Status & Continuation Guide
 
-> Last updated: 2026-03-31
+> Last updated: 2026-04-01
 > Purpose: Provide all necessary context for any developer (or AI assistant) to continue this project without ambiguity or risk of breaking existing work.
 
 ---
@@ -51,8 +51,8 @@ infrastructure → depends on application (and transitively domain)
 1. **Domain entities**: Private constructor, `static create(...)` factory + `static reconstitute(...)` for persistence mapping. No framework annotations.
 2. **Application services**: Do NOT implement use case interfaces (except ServiceRequest/Tenant which directly implement some — see BeanConfiguration). Use `jakarta.transaction.Transactional`.
 3. **Use case interfaces**: Single-method functional interfaces in `application/{feature}/usecase/`.
-4. **BeanConfiguration** (`infrastructure/config/BeanConfiguration.java`): Wires application services and exposes use case beans via method references. This is the central wiring point — **always update it when adding new features**.
-5. **Controllers** inject use case interfaces, NOT application services directly.
+4. **BeanConfiguration** (`infrastructure/config/BeanConfiguration.java`): Wires application services and exposes use case beans via method references (or a single `@Bean` for the application service where that avoids duplicate Spring beans). This is the central wiring point — **always update it when adding new features**.
+5. **Controllers** normally inject use case interfaces. For aggregates where the same `*ApplicationService` instance implements multiple use-case interfaces, some REST controllers inject the **application service directly** (`TenantApplicationService`, `ServiceRequestApplicationService`, `ForwardingReasonApplicationService`, `HistoryTypeApplicationService`, `RequestHistoryApplicationService`) so Spring does not see two beans for the same interface.
 6. **REST mappers** (`@Component`): Convert between DTOs ↔ Commands/Results.
 7. **Persistence mappers** (`@Component`): Convert between JPA entities ↔ Domain entities using `reconstitute()`.
 8. **JPA entities**: Use `@Id` WITHOUT `@GeneratedValue` (domain generates UUIDs). Use `@JdbcTypeCode(SqlTypes.JSON)` for JSONB columns.
@@ -73,29 +73,17 @@ public CreateXxxUseCase createXxxUseCase(XxxApplicationService svc) {
 }
 ```
 
-For services that **directly implement** use case interfaces (Tenant, ServiceRequest):
-```java
-@Bean
-public TenantApplicationService tenantApplicationService(TenantRepository repo) {
-    return new TenantApplicationService(repo);
-}
-// Only register beans for interfaces NOT directly implemented:
-@Bean
-public DeleteTenantUseCase deleteTenantUseCase(TenantApplicationService svc) {
-    return svc::delete;
-}
-// Do NOT register CreateTenantUseCase etc. — the service bean already IS one.
-```
+For **Tenant**, **Service Request**, **Forwarding reasons**, **History**, **Request history**: expose a single `@Bean` for `*ApplicationService` and inject that type from REST controllers (avoids duplicate Spring beans for the same runtime instance).
 
 ---
 
 ## 3. Features Implemented
 
 ### 3.1 Tenant (`domain.tenant` / `application.tenant` / `infrastructure...tenant`)
-- **CRUD**: Create, Get, Update, List, Delete
+- **CRUD**: Create, Get, Update, List (paginated + optional `q`), Delete
 - **API**: `/api/v1/tenants`
 - **DB table**: `tenant` (id, name, code, active, config JSONB, created_at, updated_at)
-- **Notes**: TenantApplicationService implements CreateTenantUseCase, GetTenantUseCase, UpdateTenantUseCase, ListTenantsUseCase directly. Only DeleteTenantUseCase is wired separately.
+- **Notes**: `TenantController` injects `TenantApplicationService` (implements create/get/update/list; `delete` is a service method).
 - **Tests**: Domain (13), Application (9), Controller (5)
 
 ### 3.2 Department (`domain.department` / `application.department` / `infrastructure...department`)
@@ -106,11 +94,11 @@ public DeleteTenantUseCase deleteTenantUseCase(TenantApplicationService svc) {
 - **Tests**: Domain (11), Application (9), Controller (6)
 
 ### 3.3 Service Request (`domain.request` / `application.request` / `infrastructure...request`)
-- **Operations**: Create, Get, Update, List by tenant, Close, Cancel
+- **Operations**: Create, Get, Update, List by tenant (paginated + optional `q` search), Close, Cancel
 - **API**: `/api/v1/service-requests`
 - **DB table**: `service_request` (30+ columns including tenant_id, protocol, service_id, person_id, address_id, channel, status, priority, dynamic_fields JSONB, etc.)
 - **Domain enums**: `Channel`, `RequestStatus`, `Priority`, `EmotionalState` (in `domain.request`)
-- **Notes**: ServiceRequestApplicationService implements CreateServiceRequestUseCase and UpdateServiceRequestUseCase directly. Other use cases wired via method references.
+- **Notes**: `ServiceRequestController` injects `ServiceRequestApplicationService` (single bean). Use cases remain in the application module for ports/testing.
 - **Tests**: Domain (12), Application (5), Controller (6)
 
 ### 3.4 Service Catalog — Subject (`domain.subject` / `application.subject` / `infrastructure...subject`)
@@ -148,29 +136,91 @@ public DeleteTenantUseCase deleteTenantUseCase(TenantApplicationService svc) {
 - **Notes**: Currently only INDIVIDUAL type is implemented. Organization can be added later following the same aggregate pattern.
 - **Tests**: Domain (11), Application (8), Controller (7)
 
-### Test Summary: **191 tests, 0 failures**
+### 3.9 Audit log (`domain.audit` / `application.audit` / filter + persistence)
+- **Behaviour**: `AuditLoggingFilter` persiste pedidos mutativos (`POST`, `PUT`, `PATCH`, `DELETE`) em `/api/v1/**` exceto `/api/v1/public/**`; ator a partir do JWT (`sub`, `preferred_username`, authorities). Opcional: `app.audit.log-get-requests=true` para também gravar GET.
+- **API**: `GET /api/v1/audit-logs` — paginação (`page`, `size`), filtros opcionais `from` / `to` (ISO-8601); **apenas Supervisão** (`SecurityConfig`).
+- **DB table**: `audit_log` (`V3__audit_log.sql`); JPA `AuditLogJpaEntity`, port `AuditLogRepository` + `AuditLogRepositoryImpl`.
+- **Tests**: Domain (3), Application (2), Controller (1)
+
+### 3.10 Notificações (`domain.notification` / `application.notification`)
+- **Regras por serviço**: `notification_rule` (FK `service_id` → catálogo `service`), evento (`VARCHAR(50)`), canal (`PUSH` | `EMAIL` | `SMS` | `WHATSAPP` | `IN_APP`), modelo de texto `template`, `active`. API: `/api/v1/notification-rules` — escrita (POST/PUT/DELETE) **apenas Supervisão**; listagem e GET por id: Operador ou Supervisão.
+- **Registos**: `notification` (tenant, opcional `request_id`, `recipient_id`, canal, título, mensagem, `extra_data` JSONB, `status` `PENDING|SENT|FAILED|READ`, datas). API: `/api/v1/notifications` (criar, listar por `tenantId` + opcional `requestId`, GET por id, `PUT /{id}/status` para transições de estado).
+- **Tests**: Domain (3), Application (4), Controller (4)
+
+### Test Summary: **217 tests, 0 failures**
 
 | Module | Tests |
 |--------|-------|
-| Domain | 91 |
-| Application | 52 |
-| Infrastructure | 48 |
-| **Total** | **191** |
+| Domain | 99 |
+| Application | 61 |
+| Infrastructure | 57 (includes 2 integration tests; requires Docker) |
+| **Total** | **217** |
 
 ---
 
 ## 4. Infrastructure & Configuration
 
-### Docker Compose (`backend/docker-compose.yml`)
+### Docker Compose — deploy local (`backend/docker-compose.yml`)
+
+Serviços: **PostGIS**, **Keycloak**, **API Spring Boot** (imagem multi-stage `Dockerfile` no mesmo diretório).
+
 ```bash
-docker compose up -d   # starts PostgreSQL (port 5432) + Keycloak (port 8180)
+cd all-citizens/backend
+docker compose up --build -d    # 5432 (DB), 9180 (Keycloak no host), 9080 (API)
 ```
+
+- **Perfil `docker`**: `SPRING_PROFILES_ACTIVE=docker` — datasource `postgres`, JWKS em `http://keycloak:8080/...` (rede interna Compose), `issuer-uri` `http://localhost:9180/realms/allcitizens` (igual ao token obtido no browser). Ver `application-docker.yml`.
+- **Volumes**: `pgdata` (BD), `attachments_data` → `/data/attachments` no contentor da app.
+- **Postgres / Keycloak**: o Keycloak usa a base **`keycloak`** (`KC_DB_URL` → `jdbc:postgresql://postgres:5432/keycloak`), separada de **`allcitizens`** (Flyway da app). O contentor **`keycloak-db-init`** (imagem `postgres:16-alpine`) corre **uma vez** em cada `compose up`, depois do Postgres ficar saudável, e faz `CREATE DATABASE keycloak` se ainda não existir — assim funciona também com **volumes antigos**. O Keycloak só arranca após esse passo (`service_completed_successfully`; requer Docker Compose **v2.20+**). **WARN** do Quarkus/Jakarta na build do Keycloak são habituais. **Logs** `relation ... does not exist` no Postgres durante o primeiro Liquibase do Keycloak podem ser ignorados se o serviço terminar com *started*.
+- **Health**: Postgres (`pg_isready`); app (`/actuator/health`). Keycloak arranca após Postgres saudável; a app depende de Keycloak **started** — na primeira subida pode levar ~1–2 min até o Keycloak responder; repetir pedido à API se falhar validação JWT momentaneamente.
+- **Apenas dependências** (sem rebuild da API): `docker compose up -d postgres keycloak`.
+- **Desenvolvimento na máquina** com DB/Keycloak nos contentores: manter `application.yml` com `localhost` para Postgres e JWT, como hoje.
 
 ### Spring Profiles
 - **default**: Expects Keycloak running for JWT validation
 - **dev**: Disables OAuth2/JWT, permits all requests (use for local development)
   - Config: `DevSecurityConfig.java` (active with `@Profile("dev")`)
   - Original `SecurityConfig.java` has `@Profile("!dev")`
+
+### Keycloak — realm `allcitizens` (alinhado ao backend)
+
+**Backend (já implementado, perfil `!dev`):**
+- `issuer-uri` / `jwk-set-uri` em `application.yml`: `http://localhost:9180/realms/allcitizens` | servidor HTTP em `server.port: 9080`
+- `KeycloakRealmRoleConverter` lê `realm_access.roles` e mapeia **apenas** as realm roles abaixo para `ROLE_OPERADOR_ATENDIMENTO` e `ROLE_SUPERVISAO` (outras roles do Keycloak são ignoradas).
+- `SecurityConfig` aplica a matriz HTTP × papel (ver **HTTP API × papéis** abaixo). Constantes de nomes: `ApplicationRoles.java`.
+
+### HTTP API × papéis (Spring `SecurityConfig`, perfil `!dev`)
+
+Público: `GET /actuator/health`, `GET /api/v1/public/**`, **Swagger UI** e OpenAPI JSON (`/swagger-ui.html`, `/v3/api-docs`; ver springdoc em `application.yml`).
+
+| Área | Operador de atendimento | Supervisão |
+|------|-------------------------|------------|
+| **Tenant** | GET (lista/detalhe) | POST, PUT, DELETE |
+| **Subdivisões** (global) | GET | POST, PUT, DELETE |
+| **Departamentos, Assuntos, Serviços do catálogo** | GET | POST, PUT, DELETE |
+| **Tipos de histórico** (`/api/v1/history-types`) | GET | POST |
+| **Motivos de encaminhamento** (`/api/v1/forwarding-reasons`) | GET | POST |
+| **Pessoas, Endereços** | POST, GET, PUT; sem DELETE | Inclui DELETE |
+| **Anexos** | POST, GET; sem DELETE | Inclui DELETE |
+| **Pedidos, encaminhamentos, respostas, redistribuições, histórico do pedido** | Todas as operações expostas | Idem |
+| **Auditoria** (`GET /api/v1/audit-logs`) | — | Apenas consulta (Supervisão) |
+| **Regras de notificação** (`/api/v1/notification-rules`) | GET, listagem | POST, PUT, DELETE |
+
+Qualquer outro caminho sob `/api/v1/**` segue a linha **Operador ou Supervisão** (ambos os papéis). Perfil **`dev`**: sem JWT (`DevSecurityConfig` — tudo permitido para testes locais).
+
+**No Keycloak Admin (manual até automatizar):**
+1. Criar realm **`allcitizens`** (ou usar o que já existir com esse nome).
+2. Em **Realm roles**, criar exatamente:
+   - `operador-atendimento`
+   - `supervisao`
+3. Atribuir essas roles aos **utilizadores** (ou a grupos) conforme o papel.
+4. Criar **client** para a app (ex.: `allcitizens-api` confidencial ou público para SPA, conforme o front): configurar redirect URIs, obter tokens com **realm roles** no access token (por defeito `realm_access.roles` aparece no JWT do Keycloak).
+
+### OpenAPI / Swagger UI (springdoc)
+
+- Dependência: `springdoc-openapi-starter-webmvc-ui` no módulo `infrastructure`.
+- Metadados e esquema **Bearer JWT**: `OpenApiConfiguration.java`.
+- Com a app em execução (ex.: `http://localhost:9080`): abrir `http://localhost:9080/swagger-ui.html` → **Authorize** → colar o access token do Keycloak (ou `Bearer <token>` consoante o campo). Chamadas à API continuam a respeitar a matriz de papéis.
 
 ### Running the Application
 ```bash
@@ -182,12 +232,17 @@ mvn spring-boot:run -pl infrastructure -Dspring-boot.run.profiles=dev  # run wit
 ### Running Tests
 ```bash
 cd all-citizens/backend
-mvn test   # runs all 191 tests
+mvn test   # runs all tests (unit + WebMvcTest + integration)
 ```
 
+**Integration tests** (`InfrastructureApiIntegrationTest`): PostgreSQL via Testcontainers — **Docker must be running**. They boot the full Spring context, run Flyway (`V1` + newer migrations), and exercise HTTP APIs end-to-end (including multipart upload).
+
 ### Database
-- **Flyway migration**: `V1__initial_schema.sql` creates the full schema (50+ tables, ENUMs, triggers, indexes)
-- **JDBC URL quirk**: `?stringtype=unspecified` allows PostgreSQL to auto-cast varchar to custom ENUM types
+- **Flyway migrations** (never edit an already-applied version; add a new `V{n}__...sql` for any schema change):
+  - `V1__initial_schema.sql` — full schema (50+ tables, ENUMs, triggers, indexes)
+  - `V2__pg_trgm_service_request_search.sql` — GIN trigram indexes on `service_request.protocol` / `description` (extension + indexes may duplicate harmless parts of `V1` when `pg_trgm` already exists)
+  - `V3__audit_log.sql` — tabela `audit_log` (trilha HTTP / RBAC)
+- **JDBC URL quirk**: `?stringtype=unspecified` helps some bindings; for native PostgreSQL ENUM columns, JPA entities use `@JdbcType(PostgreSQLEnumJdbcType.class)` together with `@Enumerated(EnumType.STRING)` on enum fields (see `ServiceRequestJpaEntity`, `CatalogServiceJpaEntity`, forwarding/attachment entities).
 - **Seed data required**: State/City/District tables need seed data for Address FKs. Current test data:
   ```sql
   INSERT INTO state (code, name) VALUES ('SP', 'São Paulo');
@@ -204,6 +259,9 @@ mvn test   # runs all 191 tests
 3. **`stringtype=unspecified` in JDBC URL**: Required for PostgreSQL custom ENUM types to work with Hibernate's string parameters.
 4. **Person aggregate**: Combines `person` + `individual` tables into a single domain entity. The persistence layer handles the split. Organization type is not yet implemented.
 5. **Subdivision has no tenant_id**: It's a global lookup table shared across tenants.
+6. **PostgreSQL ENUM columns + Hibernate**: Native types (`priority_type`, `channel_type`, etc.) require `PostgreSQLEnumJdbcType` on JPA enum fields so inserts are not sent as plain `varchar` (integration tests against real PostgreSQL catch this).
+7. **RBAC HTTP**: Operador foca atendimento; Supervisão gere estrutura (tenant, catálogos, subdivisão global) e remoções sensíveis. Ver secção *HTTP API × papéis*.
+8. **Audit HTTP**: Registo por filtro após autenticação; mutações por defeito; leitura de audit só Supervisão. Falhas de persistência do audit não impedem a resposta HTTP (apenas log).
 
 ---
 
@@ -251,6 +309,19 @@ mvn test   # runs all 191 tests
 | PUT | `/api/v1/service-requests/{id}` | Update service request |
 | POST | `/api/v1/service-requests/{id}/close` | Close service request |
 | POST | `/api/v1/service-requests/{id}/cancel` | Cancel service request |
+| GET | `/api/v1/service-requests?tenantId=&page=&size=&q=` | Paginated list + optional search (`q`) |
+| GET/POST | `/api/v1/forwarding-reasons` | List / create forwarding reasons |
+| GET/POST | `/api/v1/service-requests/{id}/forwardings` | List / create forwardings |
+| GET | `/api/v1/forwardings/{id}` | Get forwarding |
+| GET/POST | `/api/v1/forwardings/{id}/responses` | List / add forwarding response |
+| GET/POST | `/api/v1/forwardings/{forwardingId}/redistributions` | List / create redistribution |
+| GET/POST | `/api/v1/history-types` | List / create history types |
+| GET/POST | `/api/v1/service-requests/{id}/history` | List / append request history |
+| POST/GET/DELETE | `/api/v1/attachments` (multipart), `/api/v1/attachments/{id}`, `/api/v1/service-requests/{id}/attachments` | File upload and listing |
+| GET | `/api/v1/audit-logs?page=&size=&from=&to=` | Lista registos de auditoria (Supervisão); `from`/`to` ISO-8601 opcionais |
+| POST/GET | `/api/v1/notifications`, `GET /api/v1/notifications/{id}`, `PUT /api/v1/notifications/{id}/status` | Notificações por tenant / pedido; atualizar `PENDING`→`SENT`/`FAILED`, `SENT`→`READ` |
+| POST/GET/PUT/DELETE | `/api/v1/notification-rules`, `GET ?serviceId=` | Regras por serviço do catálogo; escrita só Supervisão |
+| GET | `/api/v1/tenants?page=&size=&q=`, `/api/v1/departments?...`, `/api/v1/persons?...`, `/api/v1/subjects?...`, `/api/v1/catalog-services?...`, `/api/v1/subdivisions?...` | Paginated list endpoints with optional `q` |
 
 ---
 
@@ -313,27 +384,27 @@ After creating all files, **add beans to `BeanConfiguration.java`**.
 
 ## 8. Roadmap — What's Next
 
-### Phase 2 — Backend Core (IN PROGRESS)
+### Phase 2 — Backend Core (DONE)
 
 | # | Feature | Status | Notes |
 |---|---------|--------|-------|
 | 1 | Service Catalog (Subject + Subdivision + Service) | DONE | |
 | 2 | Person / Citizen | DONE | Individual type only |
 | 3 | Address | DONE | |
-| 4 | **Request Forwarding** | TODO | Encaminhamento entre departamentos. DB tables: `forwarding`, `forwarding_reason`, `forwarding_response`, `redistribution` |
-| 5 | **Request History / Timeline** | TODO | DB tables: `request_history`, `history_type` |
-| 6 | **Attachments** | TODO | File upload. DB table: `attachment` |
-| 7 | **Pagination + Filtering + Search** | TODO | Add Spring Data Pageable to list endpoints, full-text search with pg_trgm |
+| 4 | Request Forwarding | DONE | REST + domain + persistence; `forwarding`, `forwarding_reason`, `forwarding_response`, `redistribution` |
+| 5 | Request History / Timeline | DONE | `request_history`, `history_type` |
+| 6 | Attachments | DONE | Multipart upload, local storage `app.attachments.directory` |
+| 7 | Pagination + Filtering + Search | DONE | `PageResult` / `PageResponse`, `q` on list endpoints; trigram search on service requests (`V2` + repository) |
 
 ### Phase 3 — Infrastructure & Integrations
 
 | # | Feature | Status | Notes |
 |---|---------|--------|-------|
-| 1 | Keycloak Setup | TODO | Realm, roles, client config |
-| 2 | OpenAPI / Swagger | TODO | springdoc-openapi |
-| 3 | Audit Log | TODO | Who did what |
-| 4 | Notification Service | TODO | DB tables: `notification`, `notification_rule` |
-| 5 | Docker Compose completo | TODO | All services |
+| 1 | Keycloak Setup | IN PROGRESS | Backend: JWT + realm role mapping + HTTP rules (`SecurityConfig`, `KeycloakRealmRoleConverter`, `ApplicationRoles`). Admin: criar realm, roles `operador-atendimento` / `supervisao`, users, client para o front — ver secção *Keycloak — realm allcitizens*. |
+| 2 | OpenAPI / Swagger | DONE | `springdoc-openapi-starter-webmvc-ui` 2.6.x; `OpenApiConfiguration`; Swagger/UI e `/v3/api-docs` públicos em `SecurityConfig` |
+| 3 | Audit Log | DONE | `AuditLoggingFilter`, `audit_log`, `GET /api/v1/audit-logs` (Supervisão); `app.audit.log-get-requests` |
+| 4 | Notification Service | DONE | JPA + REST: `notification`, `notification_rule`; envio real (push/SMS/etc.) fora de âmbito |
+| 5 | Docker Compose completo | DONE | `docker-compose.yml`: Postgres + Keycloak + `app` (build `Dockerfile`); perfil `application-docker.yml`; volume anexos; healthchecks |
 
 ### Phase 4 — Frontend (Next.js)
 
@@ -354,19 +425,10 @@ After creating all files, **add beans to `BeanConfiguration.java`**.
 
 ## 9. DB Tables Not Yet Mapped to JPA
 
-These tables exist in the database (created by `V1__initial_schema.sql`) but do **not** have corresponding JPA entities or application code yet:
+These tables exist in the database (created by `V1__initial_schema.sql`) but do **not** have corresponding JPA entities or application code yet (Phase 2 workflow tables **are** mapped; notificações — secção 3.10 — **já** mapeadas):
 
 | Table | Purpose | Phase |
 |-------|---------|-------|
-| `forwarding` | Request forwarding between departments | Phase 2.4 |
-| `forwarding_reason` | Reasons for forwarding | Phase 2.4 |
-| `forwarding_response` | Responses to forwarded requests | Phase 2.4 |
-| `redistribution` | Redistribution of forwarded requests | Phase 2.4 |
-| `request_history` | Timeline/history of request actions | Phase 2.5 |
-| `history_type` | Types of history entries | Phase 2.5 |
-| `attachment` | File attachments | Phase 2.6 |
-| `notification` | Notification records | Phase 3.4 |
-| `notification_rule` | Notification rules per service | Phase 3.4 |
 | `phone` | Person phone numbers | Future |
 | `document` | Person documents (RG, etc.) | Future |
 | `document_type` | Document type lookup | Future |

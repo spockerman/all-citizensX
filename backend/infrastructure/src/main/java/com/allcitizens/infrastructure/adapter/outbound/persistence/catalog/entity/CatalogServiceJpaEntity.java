@@ -1,10 +1,15 @@
 package com.allcitizens.infrastructure.adapter.outbound.persistence.catalog.entity;
 
+import com.allcitizens.domain.request.Priority;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
@@ -38,8 +43,10 @@ public class CatalogServiceJpaEntity {
     @Column(name = "sla_days", nullable = false)
     private int slaDays;
 
-    @Column(name = "default_priority")
-    private String defaultPriority;
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "default_priority", nullable = false)
+    private Priority defaultPriority;
 
     @Column(name = "allows_anonymous", nullable = false)
     private boolean allowsAnonymous;
@@ -90,8 +97,8 @@ public class CatalogServiceJpaEntity {
     public int getSlaDays() { return slaDays; }
     public void setSlaDays(int slaDays) { this.slaDays = slaDays; }
 
-    public String getDefaultPriority() { return defaultPriority; }
-    public void setDefaultPriority(String defaultPriority) { this.defaultPriority = defaultPriority; }
+    public Priority getDefaultPriority() { return defaultPriority; }
+    public void setDefaultPriority(Priority defaultPriority) { this.defaultPriority = defaultPriority; }
 
     public boolean isAllowsAnonymous() { return allowsAnonymous; }
     public void setAllowsAnonymous(boolean allowsAnonymous) { this.allowsAnonymous = allowsAnonymous; }

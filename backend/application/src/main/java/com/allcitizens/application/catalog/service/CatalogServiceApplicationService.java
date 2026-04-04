@@ -2,18 +2,20 @@ package com.allcitizens.application.catalog.service;
 
 import com.allcitizens.application.catalog.command.CreateCatalogServiceCommand;
 import com.allcitizens.application.catalog.command.UpdateCatalogServiceCommand;
+import com.allcitizens.application.catalog.query.ListCatalogServicesQuery;
 import com.allcitizens.application.catalog.result.CatalogServiceResult;
+import com.allcitizens.application.catalog.usecase.ListCatalogServicesUseCase;
 import com.allcitizens.domain.catalog.CatalogService;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.catalog.CatalogServiceRepository;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import com.allcitizens.domain.request.Priority;
 import jakarta.transaction.Transactional;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
-public class CatalogServiceApplicationService {
+public class CatalogServiceApplicationService implements ListCatalogServicesUseCase {
 
     private final CatalogServiceRepository catalogServiceRepository;
 
@@ -104,10 +106,15 @@ public class CatalogServiceApplicationService {
         return CatalogServiceResult.fromDomain(catalogService);
     }
 
-    public List<CatalogServiceResult> listByTenantId(UUID tenantId) {
-        return catalogServiceRepository.findAllByTenantId(tenantId).stream()
-            .map(CatalogServiceResult::fromDomain)
-            .toList();
+    @Override
+    public PageResult<CatalogServiceResult> execute(ListCatalogServicesQuery query) {
+        var page = (query.search() == null || query.search().isBlank())
+                ? catalogServiceRepository.findAllByTenantIdPaged(
+                        query.tenantId(), query.page(), query.size())
+                : catalogServiceRepository.searchByTenantIdPaged(
+                        query.tenantId(), query.search().trim(), query.page(), query.size());
+        var content = page.content().stream().map(CatalogServiceResult::fromDomain).toList();
+        return new PageResult<>(content, page.totalElements(), page.page(), page.size());
     }
 
     @Transactional

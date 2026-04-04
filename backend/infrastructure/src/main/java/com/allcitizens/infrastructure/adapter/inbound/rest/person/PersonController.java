@@ -1,10 +1,12 @@
 package com.allcitizens.infrastructure.adapter.inbound.rest.person;
 
+import com.allcitizens.application.person.query.ListPersonsQuery;
 import com.allcitizens.application.person.usecase.CreatePersonUseCase;
 import com.allcitizens.application.person.usecase.DeletePersonUseCase;
 import com.allcitizens.application.person.usecase.GetPersonUseCase;
 import com.allcitizens.application.person.usecase.ListPersonsUseCase;
 import com.allcitizens.application.person.usecase.UpdatePersonUseCase;
+import com.allcitizens.infrastructure.adapter.inbound.rest.common.dto.PageResponse;
 import com.allcitizens.infrastructure.adapter.inbound.rest.person.dto.CreatePersonRequest;
 import com.allcitizens.infrastructure.adapter.inbound.rest.person.dto.PersonResponse;
 import com.allcitizens.infrastructure.adapter.inbound.rest.person.dto.UpdatePersonRequest;
@@ -22,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -58,10 +59,17 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonResponse>> list(@RequestParam UUID tenantId) {
-        var results = listPersonsUseCase.execute(tenantId);
-        var responses = results.stream().map(mapper::toResponse).toList();
-        return ResponseEntity.ok(responses);
+    public ResponseEntity<PageResponse<PersonResponse>> list(
+            @RequestParam UUID tenantId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) String q) {
+        var safeSize = Math.min(Math.max(size, 1), 100);
+        var query = new ListPersonsQuery(tenantId, page, safeSize, q);
+        var results = listPersonsUseCase.execute(query);
+        var responses = results.content().stream().map(mapper::toResponse).toList();
+        return ResponseEntity.ok(new PageResponse<>(
+                responses, results.totalElements(), results.totalPages(), results.page(), results.size()));
     }
 
     @GetMapping("/{id}")

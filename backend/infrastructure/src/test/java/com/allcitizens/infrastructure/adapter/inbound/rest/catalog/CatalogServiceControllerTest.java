@@ -1,8 +1,10 @@
 package com.allcitizens.infrastructure.adapter.inbound.rest.catalog;
 
 import com.allcitizens.application.catalog.command.CreateCatalogServiceCommand;
+import com.allcitizens.application.catalog.query.ListCatalogServicesQuery;
 import com.allcitizens.application.catalog.command.UpdateCatalogServiceCommand;
 import com.allcitizens.application.catalog.result.CatalogServiceResult;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.application.catalog.usecase.CreateCatalogServiceUseCase;
 import com.allcitizens.application.catalog.usecase.DeleteCatalogServiceUseCase;
 import com.allcitizens.application.catalog.usecase.GetCatalogServiceUseCase;
@@ -197,12 +199,13 @@ class CatalogServiceControllerTest {
         var result = sampleResult();
         var response = sampleResponse();
 
-        when(listCatalogServicesUseCase.execute(tenantId)).thenReturn(List.of(result));
+        var page = new PageResult<>(List.of(result), 1, 0, 20);
+        when(listCatalogServicesUseCase.execute(any(ListCatalogServicesQuery.class))).thenReturn(page);
         when(mapper.toResponse(result)).thenReturn(response);
 
         mockMvc.perform(get("/api/v1/catalog-services").param("tenantId", tenantId.toString()))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].displayName").value("Leak report"));
+            .andExpect(jsonPath("$.content[0].displayName").value("Leak report"));
     }
 
     @Test

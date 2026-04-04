@@ -1,8 +1,13 @@
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/address/AddressControllerTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/audit/AuditLogControllerTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/catalog/CatalogServiceControllerTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/department/DepartmentControllerTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/notification/NotificationControllerTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/notification/NotificationRuleControllerTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/person/PersonControllerTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/request/ServiceRequestControllerTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/subdivision/SubdivisionControllerTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/subject/SubjectControllerTest.java
 /home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/adapter/inbound/rest/tenant/TenantControllerTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/integration/InfrastructureApiIntegrationTest.java
+/home/sandrocampos/workspace/Modelos Dados/all-citizens/backend/infrastructure/src/test/java/com/allcitizens/infrastructure/security/KeycloakRealmRoleConverterTest.java

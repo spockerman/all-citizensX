@@ -2,16 +2,18 @@ package com.allcitizens.application.department.service;
 
 import com.allcitizens.application.department.command.CreateDepartmentCommand;
 import com.allcitizens.application.department.command.UpdateDepartmentCommand;
+import com.allcitizens.application.department.query.ListDepartmentsQuery;
 import com.allcitizens.application.department.result.DepartmentResult;
+import com.allcitizens.application.department.usecase.ListDepartmentsUseCase;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.department.Department;
 import com.allcitizens.domain.department.DepartmentRepository;
 import com.allcitizens.domain.exception.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
-public class DepartmentApplicationService {
+public class DepartmentApplicationService implements ListDepartmentsUseCase {
 
     private final DepartmentRepository departmentRepository;
 
@@ -78,10 +80,15 @@ public class DepartmentApplicationService {
         return DepartmentResult.fromDomain(department);
     }
 
-    public List<DepartmentResult> listByTenantId(UUID tenantId) {
-        return departmentRepository.findAllByTenantId(tenantId).stream()
-            .map(DepartmentResult::fromDomain)
-            .toList();
+    @Override
+    public PageResult<DepartmentResult> execute(ListDepartmentsQuery query) {
+        var page = (query.search() == null || query.search().isBlank())
+                ? departmentRepository.findAllByTenantIdPaged(
+                        query.tenantId(), query.page(), query.size())
+                : departmentRepository.searchByTenantIdPaged(
+                        query.tenantId(), query.search().trim(), query.page(), query.size());
+        var content = page.content().stream().map(DepartmentResult::fromDomain).toList();
+        return new PageResult<>(content, page.totalElements(), page.page(), page.size());
     }
 
     @Transactional

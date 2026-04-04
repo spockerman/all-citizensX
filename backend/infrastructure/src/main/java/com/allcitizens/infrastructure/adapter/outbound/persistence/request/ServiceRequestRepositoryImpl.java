@@ -1,9 +1,13 @@
 package com.allcitizens.infrastructure.adapter.outbound.persistence.request;
 
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.request.ServiceRequest;
 import com.allcitizens.domain.request.ServiceRequestRepository;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.request.mapper.ServiceRequestPersistenceMapper;
 import com.allcitizens.infrastructure.adapter.outbound.persistence.request.repository.JpaServiceRequestRepository;
+import com.allcitizens.infrastructure.adapter.outbound.persistence.request.entity.ServiceRequestJpaEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -44,6 +48,23 @@ public class ServiceRequestRepositoryImpl implements ServiceRequestRepository {
         return jpaRepository.findAllByTenantId(tenantId).stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public PageResult<ServiceRequest> findAllByTenantIdPaged(UUID tenantId, int page, int size) {
+        var pg = jpaRepository.findAllByTenantId(tenantId, PageRequest.of(page, size));
+        return toPageResult(pg);
+    }
+
+    @Override
+    public PageResult<ServiceRequest> searchByTenantIdPaged(UUID tenantId, String query, int page, int size) {
+        var pg = jpaRepository.searchByTenantId(tenantId, query, PageRequest.of(page, size));
+        return toPageResult(pg);
+    }
+
+    private PageResult<ServiceRequest> toPageResult(Page<ServiceRequestJpaEntity> pg) {
+        var content = pg.getContent().stream().map(mapper::toDomain).toList();
+        return new PageResult<>(content, pg.getTotalElements(), pg.getNumber(), pg.getSize());
     }
 
     @Override

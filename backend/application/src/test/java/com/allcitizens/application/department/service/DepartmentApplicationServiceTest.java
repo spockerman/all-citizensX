@@ -1,7 +1,9 @@
 package com.allcitizens.application.department.service;
 
 import com.allcitizens.application.department.command.CreateDepartmentCommand;
+import com.allcitizens.application.department.query.ListDepartmentsQuery;
 import com.allcitizens.application.department.command.UpdateDepartmentCommand;
+import com.allcitizens.domain.common.PageResult;
 import com.allcitizens.domain.department.Department;
 import com.allcitizens.domain.department.DepartmentRepository;
 import com.allcitizens.domain.exception.EntityNotFoundException;
@@ -151,12 +153,13 @@ class DepartmentApplicationServiceTest {
         var dept1 = Department.create(tenantId, "Dept 1", null, null, false, false, 0);
         var dept2 = Department.create(tenantId, "Dept 2", null, null, false, false, 1);
 
-        when(departmentRepository.findAllByTenantId(tenantId)).thenReturn(List.of(dept1, dept2));
+        when(departmentRepository.findAllByTenantIdPaged(tenantId, 0, 20))
+            .thenReturn(new PageResult<>(List.of(dept1, dept2), 2, 0, 20));
 
-        var results = service.listByTenantId(tenantId);
+        var results = service.execute(new ListDepartmentsQuery(tenantId, 0, 20, null));
 
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).name()).isEqualTo("Dept 1");
-        assertThat(results.get(1).name()).isEqualTo("Dept 2");
+        assertThat(results.content()).hasSize(2);
+        assertThat(results.content().get(0).name()).isEqualTo("Dept 1");
+        assertThat(results.content().get(1).name()).isEqualTo("Dept 2");
     }
 }
