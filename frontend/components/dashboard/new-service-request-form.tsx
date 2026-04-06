@@ -4,27 +4,27 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const CHANNEL_OPTIONS = [
-  { value: "WEB", label: "Portal (web)" },
-  { value: "PHONE", label: "Telefone" },
-  { value: "IN_PERSON", label: "Presencial" },
+  { value: "WEB", label: "Web portal" },
+  { value: "PHONE", label: "Phone" },
+  { value: "IN_PERSON", label: "In person" },
   { value: "WHATSAPP", label: "WhatsApp" },
-  { value: "MOBILE_APP", label: "Aplicativo móvel" },
+  { value: "MOBILE_APP", label: "Mobile app" },
   { value: "CHATBOT", label: "Chatbot" },
-  { value: "EMAIL", label: "E-mail" },
+  { value: "EMAIL", label: "Email" },
 ] as const;
 
 const PRIORITY_OPTIONS = [
-  { value: "LOW", label: "Baixa" },
+  { value: "LOW", label: "Low" },
   { value: "NORMAL", label: "Normal" },
-  { value: "HIGH", label: "Alta" },
-  { value: "URGENT", label: "Urgente" },
+  { value: "HIGH", label: "High" },
+  { value: "URGENT", label: "Urgent" },
 ] as const;
 
 type Props = {
   tenantConfigured: boolean;
 };
 
-export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
+export function NewServiceRequestForm({ tenantConfigured }: Props) {
   const router = useRouter();
   const [description, setDescription] = useState("");
   const [channel, setChannel] = useState<string>("WEB");
@@ -54,15 +54,15 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
       if (!res.ok) {
         setError(
           data.detail
-            ? `${data.error ?? "Erro"}: ${data.detail.slice(0, 400)}`
-            : (data.error ?? `Erro HTTP ${res.status}`),
+            ? `${data.error ?? "Error"}: ${data.detail.slice(0, 400)}`
+            : (data.error ?? `HTTP ${res.status}`),
         );
         return;
       }
-      router.push("/dashboard/solicitacoes");
+      router.push("/dashboard/service-requests");
       router.refresh();
     } catch {
-      setError("Falha de rede ao enviar o formulário.");
+      setError("Network error while submitting the form.");
     } finally {
       setSubmitting(false);
     }
@@ -75,10 +75,10 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
     >
       {!tenantConfigured ? (
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          Defina <code className="rounded bg-amber-100/80 px-1">TENANT_ID</code>{" "}
-          e{" "}
+          Set{" "}
+          <code className="rounded bg-amber-100/80 px-1">TENANT_ID</code> and{" "}
           <code className="rounded bg-amber-100/80 px-1">DEFAULT_SERVICE_ID</code>{" "}
-          no ambiente do frontend para registrar solicitações na API.
+          in the frontend environment to create service requests via the API.
         </div>
       ) : null}
 
@@ -93,7 +93,7 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
           htmlFor="description"
           className="mb-2 block text-sm font-bold text-on-surface"
         >
-          Descrição <span className="text-red-600">*</span>
+          Description <span className="text-red-600">*</span>
         </label>
         <textarea
           id="description"
@@ -101,7 +101,7 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
           rows={5}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Descreva o pedido ou ocorrência com o máximo de detalhes possível."
+          placeholder="Describe the request with as much detail as possible."
           className="w-full rounded-lg border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-on-surface placeholder:text-gray-400 focus:border-accent focus:ring-1 focus:ring-accent"
         />
       </div>
@@ -112,7 +112,7 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
             htmlFor="channel"
             className="mb-2 block text-sm font-bold text-on-surface"
           >
-            Canal de entrada
+            Channel
           </label>
           <select
             id="channel"
@@ -132,7 +132,7 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
             htmlFor="priority"
             className="mb-2 block text-sm font-bold text-on-surface"
           >
-            Prioridade
+            Priority
           </label>
           <select
             id="priority"
@@ -157,7 +157,7 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
             onChange={(e) => setConfidential(e.target.checked)}
             className="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent"
           />
-          Tratar como confidencial
+          Confidential
         </label>
         <label className="flex cursor-pointer items-center gap-3 text-sm font-medium text-on-surface">
           <input
@@ -166,7 +166,7 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
             onChange={(e) => setAnonymous(e.target.checked)}
             className="h-4 w-4 rounded border-gray-300 text-accent focus:ring-accent"
           />
-          Solicitante anônimo
+          Anonymous requester
         </label>
       </div>
 
@@ -181,21 +181,21 @@ export function NovaSolicitacaoForm({ tenantConfigured }: Props) {
               <span className="material-symbols-outlined animate-spin text-[20px]">
                 progress_activity
               </span>
-              Registrando…
+              Submitting…
             </>
           ) : (
             <>
               <span className="material-symbols-outlined text-[20px]">save</span>
-              Registrar solicitação
+              Create service request
             </>
           )}
         </button>
         <button
           type="button"
-          onClick={() => router.push("/dashboard/solicitacoes")}
+          onClick={() => router.push("/dashboard/service-requests")}
           className="rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-50"
         >
-          Cancelar
+          Cancel
         </button>
       </div>
     </form>

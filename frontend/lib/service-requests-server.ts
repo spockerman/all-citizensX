@@ -18,23 +18,23 @@ type PageResponse = {
 };
 
 const CHANNEL_LABELS: Record<string, string> = {
-  PHONE: "Telefone",
-  WEB: "Portal",
-  MOBILE_APP: "Aplicativo",
+  PHONE: "Phone",
+  WEB: "Web",
+  MOBILE_APP: "Mobile app",
   WHATSAPP: "WhatsApp",
   CHATBOT: "Chatbot",
-  IN_PERSON: "Presencial",
-  EMAIL: "E-mail",
+  IN_PERSON: "In person",
+  EMAIL: "Email",
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  OPEN: "Aberta",
-  IN_PROGRESS: "Em análise",
-  FORWARDED: "Encaminhada",
-  ANSWERED: "Respondida",
-  CLOSED: "Encerrada",
-  CANCELLED: "Cancelada",
-  REOPENED: "Reaberta",
+  OPEN: "Open",
+  IN_PROGRESS: "In progress",
+  FORWARDED: "Forwarded",
+  ANSWERED: "Answered",
+  CLOSED: "Closed",
+  CANCELLED: "Cancelled",
+  REOPENED: "Reopened",
 };
 
 function channelLabel(code: string | null | undefined) {
@@ -50,7 +50,7 @@ function statusLabel(code: string | null | undefined) {
 function formatInstant(iso: string | null | undefined) {
   if (!iso) return "—";
   try {
-    return new Intl.DateTimeFormat("pt-BR", {
+    return new Intl.DateTimeFormat("en-US", {
       dateStyle: "short",
       timeStyle: "short",
     }).format(new Date(iso));

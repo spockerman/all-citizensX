@@ -15,7 +15,7 @@ export default async function DashboardLayout({
   const userName =
     session.user.name ??
     session.user.email?.split("@")[0] ??
-    "Operador";
+    "Operator";
 
   return (
     <AppShell userName={userName} userEmail={session.user.email}>

@@ -4,35 +4,40 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navMain = [
-  { href: "/dashboard", label: "Painel", icon: "grid_view" as const },
+  { href: "/dashboard", label: "Dashboard", icon: "grid_view" as const },
   {
-    href: "/dashboard/solicitacoes",
-    label: "Solicitações",
+    href: "/dashboard/service-requests",
+    label: "Service requests",
     icon: "assignment" as const,
   },
   {
-    href: "/dashboard/catalogo",
-    label: "Catálogo de serviços",
+    href: "/dashboard/subjects",
+    label: "Subjects",
+    icon: "topic" as const,
+  },
+  {
+    href: "/dashboard/service-catalog",
+    label: "Service catalog",
     icon: "menu_book" as const,
     soon: true,
   },
   {
-    href: "/dashboard/cidadaos",
-    label: "Cidadãos",
+    href: "/dashboard/citizens",
+    label: "Citizens",
     icon: "groups" as const,
     soon: true,
   },
   {
-    href: "/dashboard/relatorios",
-    label: "Relatórios",
+    href: "/dashboard/reports",
+    label: "Reports",
     icon: "analytics" as const,
     soon: true,
   },
 ];
 
 const navSecondary = [
-  { href: "/dashboard/equipe", label: "Equipe", icon: "person", soon: true },
-  { href: "/dashboard/mensagens", label: "Mensagens", icon: "mail", soon: true },
+  { href: "/dashboard/team", label: "Team", icon: "person", soon: true },
+  { href: "/dashboard/messages", label: "Messages", icon: "mail", soon: true },
 ];
 
 function navItemIsActive(pathname: string, href: string) {
@@ -56,7 +61,7 @@ export function AppSidebar() {
           item.soon ? (
             <div
               key={item.label}
-              title="Em breve"
+              title="Coming soon"
               className="flex cursor-not-allowed items-center gap-3 rounded-lg px-4 py-2.5 text-on-surface-variant opacity-55"
             >
               <span className="material-symbols-outlined text-[20px]">
@@ -95,7 +100,7 @@ export function AppSidebar() {
           {navSecondary.map((item) => (
             <div
               key={item.label}
-              title="Em breve"
+              title="Coming soon"
               className="flex cursor-not-allowed items-center gap-3 rounded-lg px-4 py-2.5 text-on-surface-variant opacity-55"
             >
               <span className="material-symbols-outlined text-[20px]">
@@ -105,14 +110,14 @@ export function AppSidebar() {
             </div>
           ))}
           <div
-            title="Em breve"
+            title="Coming soon"
             className="flex cursor-not-allowed items-center justify-between rounded-lg px-4 py-2.5 text-on-surface-variant opacity-55"
           >
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[20px]">
                 notifications
               </span>
-              <span className="text-sm font-medium">Notificações</span>
+              <span className="text-sm font-medium">Notifications</span>
             </div>
             <span className="rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] text-on-surface-variant">
               —
@@ -122,23 +127,23 @@ export function AppSidebar() {
       </nav>
       <div className="space-y-1 pt-6">
         <div
-          title="Em breve"
+          title="Coming soon"
           className="flex cursor-not-allowed items-center justify-between rounded-lg px-4 py-2.5 text-on-surface-variant opacity-55"
         >
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-[20px]">
               settings
             </span>
-            <span className="text-sm font-medium">Configurações</span>
+            <span className="text-sm font-medium">Settings</span>
           </div>
           <span className="material-symbols-outlined text-sm">expand_more</span>
         </div>
         <div
-          title="Em breve"
+          title="Coming soon"
           className="flex cursor-not-allowed items-center gap-3 rounded-lg px-4 py-2.5 text-on-surface-variant opacity-55"
         >
           <span className="material-symbols-outlined text-[20px]">help</span>
-          <span className="text-sm font-medium">Ajuda</span>
+          <span className="text-sm font-medium">Help</span>
         </div>
       </div>
     </aside>

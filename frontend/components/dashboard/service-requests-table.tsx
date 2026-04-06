@@ -11,7 +11,7 @@ type Props = {
   fetchHint: string | null;
 };
 
-export function SolicitacoesTable({ rows, total, fetchHint }: Props) {
+export function ServiceRequestsTable({ rows, total, fetchHint }: Props) {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -43,9 +43,9 @@ export function SolicitacoesTable({ rows, total, fetchHint }: Props) {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Filtrar na lista carregada (protocolo, descrição…) "
+            placeholder="Filter loaded rows (protocol, description…)"
             className="ml-2 w-full border-none bg-transparent text-sm placeholder:text-gray-400 focus:ring-0"
-            aria-label="Filtrar solicitações"
+            aria-label="Filter service requests"
           />
         </div>
       </div>
@@ -58,21 +58,21 @@ export function SolicitacoesTable({ rows, total, fetchHint }: Props) {
             </span>
             <p className="text-sm font-semibold text-on-surface">
               {rows.length === 0
-                ? "Nenhum protocolo encontrado."
-                : "Nenhum resultado para o filtro."}
+                ? "No service requests found."
+                : "No rows match your filter."}
             </p>
             <p className="mt-1 max-w-md text-sm text-gray-500">
               {rows.length === 0
-                ? "Quando houver registros na API para o tenant configurado, eles aparecerão aqui."
-                : "Ajuste o texto de busca ou limpe o campo acima."}
+                ? "When the API returns records for the configured tenant, they will appear here."
+                : "Adjust your search or clear the field above."}
             </p>
             {rows.length === 0 ? (
               <Link
-                href="/dashboard/solicitacoes/nova"
+                href="/dashboard/service-requests/new"
                 className="mt-5 inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-bold text-white hover:opacity-90"
               >
                 <span className="material-symbols-outlined text-[20px]">add</span>
-                Nova solicitação
+                New service request
               </Link>
             ) : null}
           </div>
@@ -81,12 +81,12 @@ export function SolicitacoesTable({ rows, total, fetchHint }: Props) {
             <table className="w-full min-w-[720px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/80 text-xs font-bold uppercase tracking-wider text-gray-400">
-                  <th className="px-5 py-3 font-bold">Protocolo</th>
-                  <th className="px-5 py-3 font-bold">Descrição</th>
-                  <th className="px-5 py-3 font-bold">Canal</th>
+                  <th className="px-5 py-3 font-bold">Protocol</th>
+                  <th className="px-5 py-3 font-bold">Description</th>
+                  <th className="px-5 py-3 font-bold">Channel</th>
                   <th className="px-5 py-3 font-bold">Status</th>
-                  <th className="px-5 py-3 font-bold">Atualizado</th>
-                  <th className="px-5 py-3 font-bold text-right">Ações</th>
+                  <th className="px-5 py-3 font-bold">Updated</th>
+                  <th className="px-5 py-3 font-bold text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -105,7 +105,7 @@ export function SolicitacoesTable({ rows, total, fetchHint }: Props) {
                         {row.description ?? "—"}
                       </span>
                       <div className="mt-0.5 text-xs text-gray-400">
-                        Aberto em {row.createdLabel}
+                        Opened {row.createdLabel}
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-5 py-4 text-gray-600">
@@ -129,13 +129,13 @@ export function SolicitacoesTable({ rows, total, fetchHint }: Props) {
                       <button
                         type="button"
                         className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-[11px] font-bold text-on-surface transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-45"
-                        title="Detalhe do protocolo em breve"
+                        title="Details coming soon"
                         disabled
                       >
                         <span className="material-symbols-outlined text-[16px]">
                           visibility
                         </span>
-                        Detalhes
+                        Details
                       </button>
                     </td>
                   </tr>
@@ -147,19 +147,19 @@ export function SolicitacoesTable({ rows, total, fetchHint }: Props) {
         {rows.length > 0 ? (
           <div className="flex flex-col items-start justify-between gap-2 border-t border-gray-100 bg-gray-50/50 px-5 py-3 text-xs text-gray-500 sm:flex-row sm:items-center">
             <span>
-              Exibindo{" "}
+              Showing{" "}
               <strong className="text-on-surface">{filtered.length}</strong>
               {query.trim() ? (
                 <>
                   {" "}
-                  filtrada(s) de{" "}
+                  filtered of{" "}
                   <strong className="text-on-surface">{rows.length}</strong>
                 </>
               ) : (
                 <>
                   {" "}
-                  de <strong className="text-on-surface">{total}</strong> no
-                  tenant (página atual)
+                  of <strong className="text-on-surface">{total}</strong> in the
+                  tenant (current page)
                 </>
               )}
             </span>

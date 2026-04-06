@@ -7,7 +7,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:9080";
 export async function POST(req: Request) {
   const session = await auth();
   if (!session?.accessToken) {
-    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const tenantId = process.env.TENANT_ID;
@@ -15,8 +15,7 @@ export async function POST(req: Request) {
   if (!tenantId || !serviceId) {
     return NextResponse.json(
       {
-        error:
-          "Configure TENANT_ID e DEFAULT_SERVICE_ID no servidor (.env local).",
+        error: "Set TENANT_ID and DEFAULT_SERVICE_ID in the server environment (.env).",
       },
       { status: 503 },
     );
@@ -26,13 +25,13 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
   const description =
     typeof body.description === "string" ? body.description.trim() : "";
   if (!description) {
-    return NextResponse.json({ error: "Descrição obrigatória" }, { status: 400 });
+    return NextResponse.json({ error: "Description is required" }, { status: 400 });
   }
 
   const channel =
@@ -76,7 +75,7 @@ export async function POST(req: Request) {
   if (!res.ok) {
     const detail = await res.text();
     return NextResponse.json(
-      { error: "Falha ao criar solicitação", detail },
+      { error: "Failed to create service request", detail },
       { status: res.status },
     );
   }
