@@ -21,5 +21,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (pathname.startsWith("/dashboard")) return !!auth?.user;
       return true;
     },
+    async jwt({ token, account }) {
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token.accessToken) {
+        session.accessToken = token.accessToken as string;
+      }
+      return session;
+    },
   },
 });

@@ -1,29 +1,31 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navMain = [
-  { href: "/dashboard", label: "Painel", icon: "grid_view", active: true },
+  { href: "/dashboard", label: "Painel", icon: "grid_view" as const },
   {
     href: "/dashboard/solicitacoes",
     label: "Solicitações",
-    icon: "assignment",
-    soon: true,
+    icon: "assignment" as const,
   },
   {
     href: "/dashboard/catalogo",
     label: "Catálogo de serviços",
-    icon: "menu_book",
+    icon: "menu_book" as const,
     soon: true,
   },
   {
     href: "/dashboard/cidadaos",
     label: "Cidadãos",
-    icon: "groups",
+    icon: "groups" as const,
     soon: true,
   },
   {
     href: "/dashboard/relatorios",
     label: "Relatórios",
-    icon: "analytics",
+    icon: "analytics" as const,
     soon: true,
   },
 ];
@@ -33,7 +35,14 @@ const navSecondary = [
   { href: "/dashboard/mensagens", label: "Mensagens", icon: "mail", soon: true },
 ];
 
+function navItemIsActive(pathname: string, href: string) {
+  if (href === "/dashboard") return pathname === "/dashboard";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function AppSidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="fixed left-0 top-0 z-20 flex h-screen w-64 flex-col overflow-y-auto custom-scrollbar border-r border-gray-200 bg-white px-4 py-6">
       <Link
@@ -59,13 +68,25 @@ export function AppSidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center justify-between rounded-lg bg-gray-100 px-4 py-2.5 text-on-surface transition-all"
+              className={
+                navItemIsActive(pathname, item.href)
+                  ? "flex items-center justify-between rounded-lg bg-gray-100 px-4 py-2.5 text-on-surface transition-all"
+                  : "flex items-center justify-between rounded-lg px-4 py-2.5 text-on-surface transition-all hover:bg-gray-50"
+              }
             >
               <div className="flex items-center gap-3">
                 <span className="material-symbols-outlined text-[20px]">
                   {item.icon}
                 </span>
-                <span className="text-sm font-semibold">{item.label}</span>
+                <span
+                  className={
+                    navItemIsActive(pathname, item.href)
+                      ? "text-sm font-semibold"
+                      : "text-sm font-medium"
+                  }
+                >
+                  {item.label}
+                </span>
               </div>
             </Link>
           ),

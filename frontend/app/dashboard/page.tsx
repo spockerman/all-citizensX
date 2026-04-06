@@ -1,34 +1,21 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { fetchServiceRequestsList } from "@/lib/service-requests-server";
 
 export const metadata: Metadata = {
   title: "Painel — All Citizens",
 };
 
-const recentRequests = [
-  {
-    id: "2026-08421",
-    subject: "Iluminação pública",
-    channel: "Presencial",
-    status: "Em análise",
-    updated: "Hoje, 09:42",
-  },
-  {
-    id: "2026-08407",
-    subject: "Coleta de resíduos",
-    channel: "Portal",
-    status: "Encaminhada",
-    updated: "Ontem, 16:10",
-  },
-  {
-    id: "2026-08388",
-    subject: "Manutenção de vias",
-    channel: "Telefone",
-    status: "Aberta",
-    updated: "30 mar, 11:05",
-  },
-];
-
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const listResult = await fetchServiceRequestsList(0, 5);
+  const recentRows = listResult.ok ? listResult.rows : [];
+  const recentHint = listResult.ok
+    ? null
+    : listResult.reason === "no_token"
+      ? "Token de API indisponível na sessão."
+      : listResult.reason === "no_tenant"
+        ? "Configure TENANT_ID para ver solicitações reais."
+        : "Não foi possível carregar solicitações da API.";
   return (
     <>
       <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4">
@@ -238,42 +225,50 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         <div className="rounded-xl border border-gray-100 bg-white p-6 lg:col-span-3">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xl font-bold">Solicitações recentes</h2>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-xs font-bold text-white"
-              title="Em breve"
-              disabled
-            >
-              <span className="material-symbols-outlined text-sm">add</span>
-              Nova solicitação
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                href="/dashboard/solicitacoes"
+                className="flex items-center gap-1 rounded-lg border border-gray-200 px-4 py-2 text-xs font-bold text-on-surface transition-colors hover:bg-gray-50"
+              >
+                <span className="material-symbols-outlined text-sm">
+                  list_alt
+                </span>
+                Ver todas
+              </Link>
+              <Link
+                href="/dashboard/solicitacoes/nova"
+                className="flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-xs font-bold text-white transition-opacity hover:opacity-90"
+              >
+                <span className="material-symbols-outlined text-sm">add</span>
+                Nova solicitação
+              </Link>
+            </div>
           </div>
-          <div className="mb-4 flex items-center gap-6 border-b border-gray-100 text-xs font-bold text-gray-400">
-            <button
-              type="button"
-              className="border-b-2 border-gray-900 pb-3 text-gray-900"
-            >
-              Todas <span className="ml-1 font-normal opacity-50">—</span>
-            </button>
-            <button
-              type="button"
-              className="border-b-2 border-transparent pb-3 hover:text-gray-900"
-              disabled
-            >
-              Abertas
-            </button>
-            <button
-              type="button"
-              className="border-b-2 border-transparent pb-3 hover:text-gray-900"
-              disabled
-            >
-              Encerradas
-            </button>
-          </div>
+          {recentHint ? (
+            <p className="mb-4 rounded-lg border border-amber-100 bg-amber-50/80 px-3 py-2 text-xs text-amber-950">
+              {recentHint}
+            </p>
+          ) : (
+            <p className="mb-4 text-xs text-gray-400">
+              Até cinco solicitações mais recentes do tenant configurado.
+            </p>
+          )}
           <div className="space-y-2">
-            {recentRequests.map((row) => (
+            {recentRows.length === 0 && !recentHint ? (
+              <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/50 px-4 py-8 text-center text-sm text-gray-500">
+                Nenhuma solicitação encontrada.{" "}
+                <Link
+                  href="/dashboard/solicitacoes/nova"
+                  className="font-bold text-accent underline-offset-2 hover:underline"
+                >
+                  Registrar a primeira
+                </Link>
+                .
+              </div>
+            ) : null}
+            {recentRows.map((row) => (
               <div
                 key={row.id}
                 className="flex flex-col gap-3 rounded-xl p-4 transition-colors hover:bg-gray-50/50 sm:flex-row sm:items-center sm:justify-between"
@@ -281,34 +276,33 @@ export default function DashboardPage() {
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-mono text-sm font-bold text-on-surface">
-                      {row.id}
+                      {row.protocol}
                     </span>
                     <span className="h-2 w-2 rounded-full bg-accent" />
                     <span className="text-xs font-bold text-gray-600">
-                      {row.status}
+                      {row.statusLabel ?? "—"}
                     </span>
                   </div>
-                  <div className="mt-1 text-sm font-semibold text-on-surface">
-                    {row.subject}
+                  <div className="mt-1 line-clamp-2 text-sm font-semibold text-on-surface">
+                    {row.description ?? "Sem descrição"}
                   </div>
                   <div className="mt-1 flex items-center text-xs text-gray-500">
                     <span className="material-symbols-outlined mr-1 text-sm">
                       outreach
                     </span>
-                    {row.channel} · atualizado {row.updated}
+                    {row.channelLabel ?? "—"} · atualizado {row.updatedLabel}
                   </div>
                 </div>
                 <div className="flex gap-2 sm:justify-end">
-                  <button
-                    type="button"
+                  <Link
+                    href="/dashboard/solicitacoes"
                     className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-[11px] font-bold hover:bg-white"
-                    disabled
                   >
                     <span className="material-symbols-outlined text-[14px]">
-                      open_in_new
+                      list_alt
                     </span>
-                    Abrir
-                  </button>
+                    Lista
+                  </Link>
                 </div>
               </div>
             ))}
